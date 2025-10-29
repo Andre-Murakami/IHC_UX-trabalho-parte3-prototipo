@@ -45,9 +45,9 @@ Passo 2: Fazer Login
 Abra index.html(tela6-login.html)
 Use uma das credenciais (login /senha):
 
-Iniciante: joaquim@email.com / joaquim123
-Investidor: carlos@email.com / carlos123
-Analista: beatriz@email.com / beatriz123
+   - Iniciante: joaquim@email.com / joaquim123
+   - Investidor: carlos@email.com / carlos123
+   - Analista: beatriz@email.com / beatriz123
 
 
 ----------------------------------------------------------------
