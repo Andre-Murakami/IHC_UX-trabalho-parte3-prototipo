@@ -1,5 +1,5 @@
 Market Pulse - Guia de Teste do protótipo
-🚀 Início Rápido (3 minutos)
+Guia rápido de uso
 
 ----------------------------------------------------------------
 ATENÇÃO: Antes de tudo 
@@ -61,22 +61,22 @@ Uma sequencia de como usar o app:
 
 
 ----------------------------------------------------------------
-📋 Estrutura do Projeto
+Estrutura do Projeto
 ----------------------------------------------------------------
-market-pulse/
-├── tela1-dashboard.html       # Dashboard principal
-├── tela2-notificacoes.html    # Gerenciamento de alertas
-├── tela3-noticias.html        # Feed de notícias
-├── tela5-historico.html       # Gráficos e análises
-├── tela6-login.html           # Autenticação
-├── tela7-perfil.html          # Configurações
-├── tela8-academy.html         # Conteúdo educacional
-├── seed-database.html         # ⚠️ EXECUTAR PRIMEIRO
-└── painel-operador.html       # Envio de alertas (admin)
+   market-pulse/
+   ├── tela1-dashboard.html       # Dashboard principal
+   ├── tela2-notificacoes.html    # Gerenciamento de alertas
+   ├── tela3-noticias.html        # Feed de notícias
+   ├── tela5-historico.html       # Gráficos e análises
+   ├── tela6-login.html           # Autenticação
+   ├── tela7-perfil.html          # Configurações
+   ├── tela8-academy.html         # Conteúdo educacional
+   ├── seed-database.html         # EXECUTAR PRIMEIRO
+   └── painel-operador.html       # Envio de alertas (admin)
 
 
 ----------------------------------------------------------------
-🎯 Cenário de Uso: Joaquim, o Iniciante (TUTORIAL DETALHADO DE NAVEGAÇÃO NO APP)
+Cenário de Uso: Joaquim, o Iniciante (TUTORIAL DETALHADO DE NAVEGAÇÃO NO APP)
 ----------------------------------------------------------------
 
 Contexto: Joaquim é técnico eletricista, conhece produtos da WEG, mas nunca investiu por medo.
@@ -129,16 +129,16 @@ ativo que conhece e recebe alertas automáticos. Progressivamente pode encorajá
 
 
 ----------------------------------------------------------------
-✅ Checklist de Validação
+Checklist de Validação
 Funcionalidades Essenciais
 ----------------------------------------------------------------
 
- Sistema de login funcional
- Criação de alertas (preço e notícias)
- Envio de alertas pelo operador
- Notificações com badge "NOVO"
- Gráficos históricos (Chart.js)
- Filtros de notícias (impacto, setor, data)
- Academy com glossário, dicas e quiz
- Tooltips educacionais para iniciantes
- Sistema de sentimento com acurácia
+   - Sistema de login funcional
+   - Criação de alertas (preço e notícias)
+   - Envio de alertas pelo operador
+   - Notificações com badge "NOVO"
+   - Gráficos históricos (Chart.js)
+   - Filtros de notícias (impacto, setor, data)
+   - Academy com glossário, dicas e quiz
+   - Tooltips educacionais para iniciantes
+   - Sistema de sentimento com acurácia
