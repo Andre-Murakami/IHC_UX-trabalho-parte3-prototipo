@@ -1,6 +1,7 @@
 Market Pulse - Guia de Teste do protótipo
 
    - Guia rápido de uso
+   - Informações detalhadas podem ser vistas no relatório anexo: "3-PROJETO PARTE 3_ PROTOTIPAÇÃO.pdf"
 
 ----------------------------------------------------------------
 ATENÇÃO: Antes de tudo 
