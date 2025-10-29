@@ -25,7 +25,7 @@ Passo 1: Inicializar Sistema
 ----------------------------------------------------------------
 A sua experiencia com este protótipo pode seguir as opções:
 
-   A) Caso queira fazer login com personas algum de nossos personas faça:
+   A) Caso queira fazer login com algum personas pre-definido, faça:
    
      - Abra seed-database.html no navegador
      - Clique em "🌱 Gerar Dados v4.0 HYBRID"
