@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Perfil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: sticky;
+            top: 44px;
+            z-index: 99;
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+        }
+
+        .edit-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 70px;
+        }
+
+        .profile-header {
+            background: white;
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            border: 4px solid #e8f4f8;
+            position: relative;
+        }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #3498db;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .profile-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e8f4f8;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #3498db;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .stats-section {
+            padding: 15px;
+            background: white;
+            border-bottom: 8px solid #f8f9fa;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 8px;
+        }
+
+        .section-header {
+            padding: 15px 15px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:active {
+            background: #f8f9fa;
+        }
+
+        .menu-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background: #e8f4f8; }
+        .icon-green { background: #e8f5e9; }
+        .icon-orange { background: #fff8e8; }
+        .icon-purple { background: #f3e5f5; }
+        .icon-red { background: #ffebee; }
+
+        .menu-content {
+            flex: 1;
+        }
+
+        .menu-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .menu-subtitle {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .menu-arrow {
+            font-size: 18px;
+            color: #ccc;
+            margin-left: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            margin-left: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #3498db;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-item:active {
+            background: #f8f9fa;
+        }
+
+        .nav-item.active {
+            background: #e8f4f8;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #3498db;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 380px;
+            max-height: 85vh;
+            background: white;
+            border-radius: 16px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -45%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .modal-header {
+            background: #f8f9fa;
+            padding: 20px;
+            position: relative;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:active {
+            background: #d0d0d0;
+        }
+
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+        }
+
+        .form-control:disabled {
+            background: #f0f0f0;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 22px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #ccc;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .logout-section {
+            padding: 20px 15px;
+            text-align: center;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 14px;
+            border-radius: 22px;
+            font-size: 14px;
+            font-weight: bold;
+            background: white;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:active {
+            transform: scale(0.97);
+            background: #ffebee;
+        }
+
+        .version-info {
+            text-align: center;
+            padding: 15px;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .legal-content {
+            font-size: 12px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .legal-content h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .legal-content h3 {
+            font-size: 16px;
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .legal-content p {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .legal-content ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .legal-content li {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .legal-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .main-content {
+                padding-bottom: calc(70px + env(safe-area-inset-bottom));
+            }
+            
+            .bottom-nav {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+        <div class="back-btn" onclick="goBack()">‹</div>
+        <div class="header-title">Meu Perfil</div>
+        <div class="edit-icon" onclick="editPersonalInfo()">✏️</div>
+    </div>
+
+    <div class="main-content">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatarContainer">
+                👤
+                <div class="avatar-edit-btn" onclick="changeAvatar()">📷</div>
+            </div>
+            <div class="profile-name" id="profileName">Carregando...</div>
+            <div class="profile-email" id="profileEmail">email@exemplo.com</div>
+            <span class="profile-type" id="profileType">💼 Investidor</span>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statAlerts">0</div>
+                    <div class="stat-label">Alertas Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statNews">0</div>
+                    <div class="stat-label">Notícias Lidas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statAssets">0</div>
+                    <div class="stat-label">Ativos</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">👤 Conta</div>
+            
+            <div class="menu-item" onclick="editPersonalInfo()">
+                <div class="menu-icon icon-blue">ℹ️</div>
+                <div class="menu-content">
+                    <div class="menu-title">Informações Pessoais</div>
+                    <div class="menu-subtitle">Nome, email, telefone</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+
+            <div class="menu-item" onclick="changePassword()">
+                <div class="menu-icon icon-green">🔒</div>
+                <div class="menu-content">
+                    <div class="menu-title">Senha e Segurança</div>
+                    <div class="menu-subtitle">Alterar senha</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+
+            <div class="menu-item" onclick="goToAcademy()">
+                <div class="menu-icon icon-purple">🎓</div>
+                <div class="menu-content">
+                    <div class="menu-title">Aprender sobre Investimentos</div>
+                    <div class="menu-subtitle">Academy - Dicas e tutoriais</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+
+            <div class="menu-item" onclick="deleteAccount()">
+                <div class="menu-icon icon-red">🗑️</div>
+                <div class="menu-content">
+                    <div class="menu-title">Excluir Conta</div>
+                    <div class="menu-subtitle">Remover permanentemente</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">🔔 Notificações</div>
+            
+            <div class="menu-item">
+                <div class="menu-icon icon-blue">📱</div>
+                <div class="menu-content">
+                    <div class="menu-title">Notificações Push</div>
+                    <div class="menu-subtitle">Alertas no app</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="pushToggle" onchange="toggleNotification('push')">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon icon-green">✉️</div>
+                <div class="menu-content">
+                    <div class="menu-title">Notificações por Email</div>
+                    <div class="menu-subtitle">Resumos diários</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="emailToggle" onchange="toggleNotification('email')">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon icon-green">💬</div>
+                <div class="menu-content">
+                    <div class="menu-title">WhatsApp</div>
+                    <div class="menu-subtitle">Alertas importantes</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="whatsappToggle" onchange="toggleNotification('whatsapp')">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">⚙️ Preferências</div>
+
+            <div class="menu-item">
+                <div class="menu-icon icon-blue">💡</div>
+                <div class="menu-content">
+                    <div class="menu-title">Mostrar Tooltips</div>
+                    <div class="menu-subtitle">Dicas e ajuda nas telas</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="tooltipsToggle" onchange="toggleTooltips()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">❓ Suporte</div>
+            
+            <div class="menu-item" onclick="contactSupport()">
+                <div class="menu-icon icon-green">💬</div>
+                <div class="menu-content">
+                    <div class="menu-title">Falar com Suporte</div>
+                    <div class="menu-subtitle">Tire suas dúvidas</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+
+            <div class="menu-item" onclick="reportBug()">
+                <div class="menu-icon icon-red">🐛</div>
+                <div class="menu-content">
+                    <div class="menu-title">Reportar Problema</div>
+                    <div class="menu-subtitle">Ajude-nos a melhorar</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">ℹ️ Sobre</div>
+            
+            <div class="menu-item" onclick="showTerms()">
+                <div class="menu-icon icon-blue">📄</div>
+                <div class="menu-content">
+                    <div class="menu-title">Termos de Uso</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+
+            <div class="menu-item" onclick="showPrivacy()">
+                <div class="menu-icon icon-green">🔐</div>
+                <div class="menu-content">
+                    <div class="menu-title">Política de Privacidade</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </div>
+        </div>
+
+        <div class="logout-section">
+            <button class="btn-logout" onclick="logout()">🚪 Sair da Conta</button>
+        </div>
+
+        <div class="version-info">
+            Market Pulse v1.0.0<br>
+            © 2025 Market Pulse. Todos os direitos reservados.
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+
+    <div class="modal" id="personalInfoModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">Informações Pessoais</h2>
+        </div>
+        <div class="modal-content">
+            <div style="font-size: 13px; line-height: 1.8; color: #333;">
+                <div class="form-group">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" class="form-control" id="piName" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="piEmail" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telefone (WhatsApp)</label>
+                    <input type="tel" class="form-control" id="piPhone">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CPF</label>
+                    <input type="text" class="form-control" id="piCPF" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data de Nascimento</label>
+                    <input type="text" class="form-control" id="piBirthdate" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="savePersonalInfo()">Salvar Telefone</button>
+        </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">Alterar Senha</h2>
+        </div>
+        <div class="modal-content">
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label class="form-label">Senha Atual</label>
+                    <input type="password" class="form-control" id="currentPassword" placeholder="Digite a senha atual">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nova Senha</label>
+                    <input type="password" class="form-control" id="newPassword" placeholder="Mínimo 8 caracteres">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Nova Senha</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Digite novamente">
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="savePassword()">Alterar Senha</button>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteAccountModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">⚠️ Excluir Conta</h2>
+        </div>
+        <div class="modal-content">
+            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="font-size: 13px; color: #856404; line-height: 1.6;">
+                    <strong>⚠️ ATENÇÃO:</strong> Esta ação é <strong>irreversível</strong>!<br><br>
+                    Todos os seus dados serão permanentemente excluídos:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Alertas configurados</li>
+                        <li>Histórico de notificações</li>
+                        <li>Preferências e configurações</li>
+                    </ul>
+                </div>
+            </div>
+            <form id="deleteAccountForm">
+                <div class="form-group">
+                    <label class="form-label">Digite sua senha para confirmar:</label>
+                    <input type="password" class="form-control" id="deletePassword" placeholder="Senha atual">
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-danger" onclick="confirmDeleteAccount()">Excluir Definitivamente</button>
+        </div>
+    </div>
+
+    <div class="modal" id="supportModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">Falar com Suporte</h2>
+        </div>
+        <div class="modal-content">
+            <form id="supportForm">
+                <div class="form-group">
+                    <label class="form-label">Assunto</label>
+                    <select class="form-control" id="supportSubject">
+                        <option>Problema com alertas</option>
+                        <option>Problema com notificações</option>
+                        <option>Dúvida sobre funcionalidades</option>
+                        <option>Erro no aplicativo</option>
+                        <option>Sugestão de melhoria</option>
+                        <option>Outro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mensagem</label>
+                    <textarea class="form-control" id="supportMessage" rows="6" placeholder="Descreva seu problema ou dúvida..." style="resize: vertical; min-height: 120px;"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="submitSupport()">Enviar Mensagem</button>
+        </div>
+    </div>
+
+    <div class="modal" id="bugModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">Reportar Problema</h2>
+        </div>
+        <div class="modal-content">
+            <form id="bugForm">
+                <div class="form-group">
+                    <label class="form-label">Tipo de Problema</label>
+                    <select class="form-control" id="bugType">
+                        <option>App travou/fechou</option>
+                        <option>Dados incorretos</option>
+                        <option>Notificação não chegou</option>
+                        <option>Erro de carregamento</option>
+                        <option>Problema visual</option>
+                        <option>Outro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição do Problema</label>
+                    <textarea class="form-control" id="bugDescription" rows="5" placeholder="Descreva o que aconteceu..." style="resize: vertical; min-height: 100px;"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="submitBugReport()">Enviar Relatório</button>
+        </div>
+    </div>
+
+    <div class="modal" id="termsModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">📜 Termos de Uso</h2>
+        </div>
+        <div class="modal-content">
+            <div class="legal-content">
+                <p><strong>Última atualização:</strong> Outubro de 2025</p>
+
+                <h3>1. Aceitação dos Termos</h3>
+                <p>Ao utilizar o Market Pulse, você concorda com estes Termos de Uso. Se não concordar, não utilize nossos serviços.</p>
+
+                <h3>2. Descrição do Serviço</h3>
+                <p>O Market Pulse é uma plataforma de alertas e análises financeiras que oferece:</p>
+                <ul>
+                    <li>Notificações em tempo real sobre ativos da bolsa de valores</li>
+                    <li>Análises técnicas e fundamentalistas automatizadas</li>
+                    <li>Classificação de notícias com inteligência artificial</li>
+                    <li>Integração com fontes de dados financeiros</li>
+                </ul>
+
+                <h3>3. Cadastro e Conta</h3>
+                <p>Você deve fornecer informações precisas e manter seus dados atualizados. É responsável por manter a confidencialidade de sua senha.</p>
+
+                <h3>4. Uso Aceitável</h3>
+                <p>Você concorda em:</p>
+                <ul>
+                    <li>Usar o serviço apenas para fins legais</li>
+                    <li>Não compartilhar sua conta com terceiros</li>
+                    <li>Não tentar acessar áreas restritas do sistema</li>
+                    <li>Não usar o serviço para manipulação de mercado</li>
+                </ul>
+
+                <h3>5. Isenção de Responsabilidade</h3>
+                <p><strong>IMPORTANTE:</strong> O Market Pulse fornece informações educacionais e ferramentas de análise. NÃO somos consultores financeiros. Nossas análises e alertas não constituem recomendações de investimento.</p>
+                <p>Você é o único responsável por suas decisões de investimento. Investimentos em renda variável envolvem riscos de perda patrimonial.</p>
+
+                <h3>6. Propriedade Intelectual</h3>
+                <p>Todo o conteúdo, design, código e funcionalidades do Market Pulse são de propriedade exclusiva da plataforma e protegidos por leis de direitos autorais.</p>
+
+                <h3>7. Modificações</h3>
+                <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Mudanças significativas serão notificadas por email.</p>
+
+                <h3>8. Rescisão</h3>
+                <p>Podemos suspender ou encerrar sua conta se você violar estes termos. Você pode encerrar sua conta a qualquer momento através das configurações de perfil.</p>
+
+                <h3>9. Limitação de Responsabilidade</h3>
+                <p>O Market Pulse não será responsável por perdas financeiras, lucros cessantes ou danos indiretos decorrentes do uso (ou impossibilidade de uso) do serviço.</p>
+
+                <h3>10. Lei Aplicável</h3>
+                <p>Estes termos são regidos pelas leis brasileiras. Foro: Comarca de São Paulo, SP.</p>
+
+                <div class="legal-footer">
+                    <p>Market Pulse - Alertas Inteligentes para Investidores<br>
+                    contato@marketpulse.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="closeModal()">Entendi</button>
+        </div>
+    </div>
+
+    <div class="modal" id="privacyModal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <h2 class="modal-title">🔒 Política de Privacidade</h2>
+        </div>
+        <div class="modal-content">
+            <div class="legal-content">
+                <p><strong>Última atualização:</strong> Outubro de 2025</p>
+
+                <h3>1. Informações que Coletamos</h3>
+                <p>Coletamos as seguintes informações:</p>
+                <ul>
+                    <li><strong>Dados de Cadastro:</strong> nome, email, telefone</li>
+                    <li><strong>Dados de Uso:</strong> alertas configurados, ativos monitorados, interações com o app</li>
+                    <li><strong>Dados Técnicos:</strong> endereço IP, tipo de dispositivo, navegador</li>
+                    <li><strong>Dados Financeiros:</strong> preferências de investimento, histórico de análises</li>
+                </ul>
+
+                <h3>2. Como Usamos suas Informações</h3>
+                <p>Utilizamos seus dados para:</p>
+                <ul>
+                    <li>Fornecer e melhorar nossos serviços</li>
+                    <li>Enviar notificações e alertas personalizados</li>
+                    <li>Realizar análises estatísticas e desenvolver novos recursos</li>
+                    <li>Comunicar atualizações e novidades da plataforma</li>
+                    <li>Garantir a segurança e prevenir fraudes</li>
+                </ul>
+
+                <h3>3. Compartilhamento de Dados</h3>
+                <p>Não vendemos seus dados pessoais. Podemos compartilhar informações apenas:</p>
+                <ul>
+                    <li>Com seu consentimento explícito</li>
+                    <li>Com prestadores de serviço essenciais (ex: servidores de hospedagem)</li>
+                    <li>Quando exigido por lei ou ordem judicial</li>
+                </ul>
+
+                <h3>4. Segurança</h3>
+                <p>Implementamos medidas de segurança técnicas e organizacionais:</p>
+                <ul>
+                    <li>Criptografia de dados sensíveis (HTTPS/TLS)</li>
+                    <li>Senhas armazenadas com hash criptográfico</li>
+                    <li>Backups regulares e redundância de servidores</li>
+                    <li>Monitoramento 24/7 contra acessos não autorizados</li>
+                </ul>
+
+                <h3>5. Cookies e Tecnologias Similares</h3>
+                <p>Utilizamos cookies para:</p>
+                <ul>
+                    <li>Manter você conectado (cookies de sessão)</li>
+                    <li>Lembrar suas preferências</li>
+                    <li>Analisar o uso da plataforma (cookies analíticos)</li>
+                </ul>
+                <p>Você pode gerenciar cookies nas configurações do seu navegador.</p>
+
+                <h3>6. Seus Direitos (LGPD)</h3>
+                <p>Você tem direito a:</p>
+                <ul>
+                    <li><strong>Acesso:</strong> saber quais dados pessoais armazenamos</li>
+                    <li><strong>Correção:</strong> atualizar dados incorretos ou desatualizados</li>
+                    <li><strong>Exclusão:</strong> solicitar a remoção de seus dados</li>
+                    <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado</li>
+                    <li><strong>Revogação:</strong> retirar consentimento a qualquer momento</li>
+                </ul>
+                <p>Para exercer seus direitos, entre em contato: <strong>privacidade@marketpulse.com</strong></p>
+
+                <h3>7. Retenção de Dados</h3>
+                <p>Mantemos seus dados enquanto sua conta estiver ativa. Após exclusão da conta, dados são removidos em até 30 dias, exceto quando exigido por lei.</p>
+
+                <h3>8. Menores de Idade</h3>
+                <p>Nossos serviços não são destinados a menores de 18 anos. Se identificarmos cadastro de menor, a conta será removida imediatamente.</p>
+
+                <h3>9. Transferência Internacional</h3>
+                <p>Seus dados são armazenados em servidores no Brasil. Se houver transferência internacional, garantiremos proteção adequada conforme LGPD.</p>
+
+                <h3>10. Alterações nesta Política</h3>
+                <p>Podemos atualizar esta política periodicamente. Mudanças significativas serão comunicadas por email com 30 dias de antecedência.</p>
+
+                <h3>11. Contato</h3>
+                <p>Dúvidas sobre privacidade? Entre em contato:</p>
+                <ul>
+                    <li><strong>Email:</strong> privacidade@marketpulse.com</li>
+                    <li><strong>Encarregado de Dados (DPO):</strong> dpo@marketpulse.com</li>
+                </ul>
+
+                <div class="legal-footer">
+                    <p>Market Pulse - Comprometidos com sua Privacidade<br>
+                    Conformidade com LGPD (Lei 13.709/2018)</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="closeModal()">Entendi</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a class="nav-item" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </a>
+        <a class="nav-item" onclick="goToAlerts()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-label">Alertas</div>
+        </a>
+        <a class="nav-item" onclick="goToNews()">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Notícias</div>
+        </a>
+        <a class="nav-item" onclick="goToReport()">
+            <div class="nav-icon">📄</div>
+            <div class="nav-label">Relatórios</div>
+        </a>
+        <a class="nav-item active">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </a>
+    </div>
+
+    <script>
+        // ========================================
+        // DATABASE
+        // ========================================
+        const DB = {
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+
+            getUserById(userId) {
+                const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                return users.find(u => u.id === userId);
+            },
+
+            getUserProfile(userId) {
+                const data = localStorage.getItem(`marketPulse_profile_${userId}`);
+                return data ? JSON.parse(data) : null;
+            },
+
+            updateUser(userId, updates) {
+                const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                const index = users.findIndex(u => u.id === userId);
+                if (index !== -1) {
+                    users[index] = { ...users[index], ...updates };
+                    localStorage.setItem('marketPulse_users', JSON.stringify(users));
+                    
+                    const currentUser = this.getCurrentUser();
+                    if (currentUser && currentUser.id === userId) {
+                        const session = { ...currentUser, name: updates.name || currentUser.name, email: updates.email || currentUser.email };
+                        localStorage.setItem('marketPulse_currentUser', JSON.stringify(session));
+                    }
+                }
+            },
+
+            updateUserProfile(userId, updates) {
+                const profile = this.getUserProfile(userId) || {};
+                const updated = { ...profile, ...updates };
+                localStorage.setItem(`marketPulse_profile_${userId}`, JSON.stringify(updated));
+            },
+
+            clearCurrentUser() {
+                localStorage.removeItem('marketPulse_currentUser');
+            },
+
+            deleteUserAccount(userId) {
+                // Remove user from users list
+                let users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                users = users.filter(u => u.id !== userId);
+                localStorage.setItem('marketPulse_users', JSON.stringify(users));
+
+                // Remove all user data
+                localStorage.removeItem(`marketPulse_profile_${userId}`);
+                localStorage.removeItem(`marketPulse_notifications_${userId}`);
+                localStorage.removeItem(`marketPulse_watchlist_${userId}`);
+                localStorage.removeItem(`marketPulse_categories_${userId}`);
+                
+                // Remove user alerts
+                let alerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                alerts = alerts.filter(a => a.userId !== userId);
+                localStorage.setItem('marketPulse_alerts', JSON.stringify(alerts));
+
+                // Log to admin
+                this.logToAdmin('delete', `Usuário ID ${userId} excluiu a própria conta`);
+            },
+
+            logToAdmin(type, message) {
+                const logs = JSON.parse(localStorage.getItem('marketPulse_admin_logs') || '[]');
+                logs.unshift({ timestamp: Date.now(), type: type, message: message, user: 'Sistema' });
+                if (logs.length > 100) logs.splice(100);
+                localStorage.setItem('marketPulse_admin_logs', JSON.stringify(logs));
+            }
+        };
+
+        // ========================================
+        // TIME UPDATE
+        // ========================================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        // ========================================
+        // CHECK BLOCKED USER
+        // ========================================
+        function checkIfBlocked() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'tela6-login.html';
+                return false;
+            }
+
+            const user = DB.getUserById(currentUser.id);
+            if (user && user.blocked) {
+                alert('⚠️ Sua conta foi bloqueada!\n\nPor favor, entre em contato com o suporte:\nsuporte@marketpulse.com\n\nVocê será desconectado automaticamente.');
+                DB.clearCurrentUser();
+                window.location.href = 'tela6-login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ========================================
+        // LOAD PROFILE
+        // ========================================
+        function loadProfile() {
+            if (!checkIfBlocked()) return;
+
+            const currentUser = DB.getCurrentUser();
+            const user = DB.getUserById(currentUser.id);
+            const profile = DB.getUserProfile(currentUser.id);
+
+            if (!user || !profile) {
+                console.error('❌ Erro ao carregar perfil');
+                alert('Erro ao carregar seu perfil. Por favor, faça login novamente.');
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+
+            // Update profile info
+            const avatarContainer = document.getElementById('profileAvatarContainer');
+            avatarContainer.innerHTML = `
+                ${user.avatar}
+                <div class="avatar-edit-btn" onclick="changeAvatar()">📷</div>
+            `;
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('profileType').textContent = `${user.avatar} ${user.userType}`;
+
+            // Update stats
+            const alerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]')
+                .filter(a => a.userId === currentUser.id && a.active);
+            document.getElementById('statAlerts').textContent = alerts.length;
+            document.getElementById('statNews').textContent = profile.stats?.newsRead || 0;
+            document.getElementById('statAssets').textContent = profile.stats?.assets || 0;
+
+            // Update notification toggles
+            document.getElementById('pushToggle').checked = profile.notifications?.push !== false;
+            document.getElementById('emailToggle').checked = profile.notifications?.email !== false;
+            document.getElementById('whatsappToggle').checked = profile.notifications?.whatsapp !== false;
+
+            // Update tooltips toggle
+            document.getElementById('tooltipsToggle').checked = profile.preferences?.showTooltips !== false;
+        }
+
+        // ========================================
+        // MODAL FUNCTIONS
+        // ========================================
+        let currentModal = null;
+        function openModal(modalId) {
+            closeModal();
+            currentModal = modalId;
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById(modalId).classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            if (currentModal) {
+                document.getElementById(currentModal).classList.remove('show');
+            }
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            currentModal = null;
+        }
+
+        // ========================================
+        // PROFILE ACTIONS (FUNÇÕES REDUNDANTES REMOVIDAS: editProfile e saveProfile)
+        // ========================================
+        function changeAvatar() {
+            if (!checkIfBlocked()) return;
+
+            const avatars = ['👤', '👨', '👩', '🧑', '👨‍💼', '👩‍💼', '🧑‍💻', '👨‍🔧'];
+            const currentUser = DB.getCurrentUser();
+            const user = DB.getUserById(currentUser.id);
+
+            let currentIndex = avatars.indexOf(user.avatar);
+            let newIndex = (currentIndex + 1) % avatars.length;
+            const newAvatar = avatars[newIndex];
+
+            DB.updateUser(currentUser.id, { avatar: newAvatar });
+
+            const avatarContainer = document.getElementById('profileAvatarContainer');
+            avatarContainer.innerHTML = `
+                ${newAvatar}
+                <div class="avatar-edit-btn" onclick="changeAvatar()">📷</div>
+            `;
+            document.getElementById('profileType').textContent = `${newAvatar} ${user.userType}`;
+        }
+
+        function toggleNotification(type) {
+            if (!checkIfBlocked()) return;
+
+            const currentUser = DB.getCurrentUser();
+            const profile = DB.getUserProfile(currentUser.id);
+            if (!profile.notifications) profile.notifications = {};
+            
+            // Assume the user is setting the value, check the checkbox state
+            const isChecked = document.getElementById(`${type}Toggle`).checked;
+
+            profile.notifications[type] = isChecked;
+            DB.updateUserProfile(currentUser.id, profile);
+
+            const status = isChecked ? 'ativadas' : 'desativadas';
+            console.log(`✅ Notificações ${type} ${status}`);
+        }
+
+        function toggleTooltips() {
+            if (!checkIfBlocked()) return;
+
+            const currentUser = DB.getCurrentUser();
+            const profile = DB.getUserProfile(currentUser.id);
+            if (!profile.preferences) profile.preferences = {};
+            
+            // Assume the user is setting the value, check the checkbox state
+            const isChecked = document.getElementById('tooltipsToggle').checked;
+
+            profile.preferences.showTooltips = isChecked;
+            DB.updateUserProfile(currentUser.id, profile);
+
+            const status = isChecked ? 'ativados' : 'desativados';
+            console.log(`✅ Tooltips ${status}`);
+        }
+
+        // ========================================
+        // MENU ACTIONS
+        // ========================================
+        function editPersonalInfo() {
+            if (!checkIfBlocked()) return;
+
+            const currentUser = DB.getCurrentUser();
+            const user = DB.getUserById(currentUser.id);
+
+            // Campos desabilitados - apenas exibição
+            document.getElementById('piName').value = user.name || '';
+            document.getElementById('piEmail').value = user.email || '';
+            document.getElementById('piCPF').value = user.cpf || '';
+            document.getElementById('piBirthdate').value = user.birthdate || '';
+            
+            // Campo editável
+            document.getElementById('piPhone').value = user.phone || '';
+
+            openModal('personalInfoModal');
+        }
+
+        function savePersonalInfo() {
+            const currentUser = DB.getCurrentUser();
+            const phone = document.getElementById('piPhone').value.trim();
+
+            DB.updateUser(currentUser.id, { phone });
+            
+            closeModal();
+            alert('✅ Telefone atualizado com sucesso!');
+            loadProfile();
+        }
+
+        function changePassword() {
+            if (!checkIfBlocked()) return;
+            openModal('passwordModal');
+        }
+
+        function savePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (!current || !newPass || !confirm) {
+                alert('⚠️ Preencha todos os campos!');
+                return;
+            }
+
+            const currentUser = DB.getCurrentUser();
+            const user = DB.getUserById(currentUser.id);
+
+            if (user.password !== current) {
+                alert('⚠️ Senha atual incorreta!');
+                return;
+            }
+
+            if (newPass.length < 8) {
+                alert('⚠️ A senha deve ter no mínimo 8 caracteres!');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                alert('⚠️ As senhas não coincidem!');
+                return;
+            }
+
+            DB.updateUser(currentUser.id, { password: newPass });
+
+            // Limpa os campos
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            
+            closeModal();
+            alert('✅ Senha alterada com sucesso!');
+        }
+
+        function goToAcademy() {
+            if (!checkIfBlocked()) return;
+            // Simulação de navegação:
+            //alert('Acessando Academy... (Redirecionaria para tela-academy.html)');
+            window.location.href = 'tela8-academy.html';
+        }
+
+        function deleteAccount() {
+            if (!checkIfBlocked()) return;
+            openModal('deleteAccountModal');
+        }
+
+        function confirmDeleteAccount() {
+            const password = document.getElementById('deletePassword').value;
+            const currentUser = DB.getCurrentUser();
+            const user = DB.getUserById(currentUser.id);
+
+            if (!password) {
+                alert('⚠️ Digite sua senha para confirmar a exclusão da conta!');
+                return;
+            }
+
+            if (user.password !== password) {
+                alert('⚠️ Senha incorreta! Não foi possível excluir a conta.');
+                return;
+            }
+
+            if (confirm('ÚLTIMA CHANCE: Tem certeza absoluta que deseja excluir sua conta e todos os seus dados? Esta ação é irreversível!')) {
+                DB.deleteUserAccount(currentUser.id);
+                DB.clearCurrentUser();
+                
+                alert('✅ Sua conta foi excluída permanentemente. Sentiremos sua falta!');
+                window.location.href = 'tela6-login.html';
+            }
+        }
+
+        function contactSupport() {
+            if (!checkIfBlocked()) return;
+            openModal('supportModal');
+        }
+
+        function submitSupport() {
+            const subject = document.getElementById('supportSubject').value;
+            const message = document.getElementById('supportMessage').value;
+
+            if (!message.trim()) {
+                alert('⚠️ Por favor, escreva sua mensagem.');
+                return;
+            }
+
+            const currentUser = DB.getCurrentUser();
+            const logMessage = `[SUPORTE] Usuário ${currentUser.email}: Assunto: ${subject}. Mensagem: "${message}"`;
+            
+            DB.logToAdmin('support', logMessage);
+
+            // Limpa o formulário
+            document.getElementById('supportMessage').value = '';
+            
+            closeModal();
+            alert('✅ Mensagem enviada para o suporte! Responderemos em breve.');
+        }
+
+        function reportBug() {
+            if (!checkIfBlocked()) return;
+            openModal('bugModal');
+        }
+
+        function submitBugReport() {
+            const bugType = document.getElementById('bugType').value;
+            const description = document.getElementById('bugDescription').value;
+
+            if (!description.trim()) {
+                alert('⚠️ Por favor, descreva o problema.');
+                return;
+            }
+
+            const currentUser = DB.getCurrentUser();
+            const logMessage = `[BUG] Usuário ${currentUser.email}: Tipo: ${bugType}. Descrição: "${description}"`;
+            
+            DB.logToAdmin('bug', logMessage);
+
+            // Limpa o formulário
+            document.getElementById('bugDescription').value = '';
+
+            closeModal();
+            alert('✅ Relatório de problema enviado! Agradecemos sua ajuda.');
+        }
+
+        function showTerms() {
+            openModal('termsModal');
+        }
+
+        function showPrivacy() {
+            openModal('privacyModal');
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function goBack() {
+            window.history.back();
+        }
+
+        function goToHome() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToAlerts() {
+            window.location.href = 'tela2-notificacoes.html';
+        }
+
+        function goToNews() {
+            window.location.href = 'tela3-noticias.html';
+        }
+
+        function goToReport() {
+            window.location.href = 'tela5-historico.html';
+        }
+
+        function logout() {
+            if (confirm('Deseja realmente sair da sua conta?')) {
+                const currentUser = DB.getCurrentUser();
+                console.log('👋 Logout do usuário:', currentUser.email);
+                
+                DB.clearCurrentUser();
+                
+                alert('✅ Logout realizado com sucesso!\n\nAté logo!');
+                window.location.href = 'tela6-login.html';
+            }
+        }
+
+        // ========================================
+        // INIT
+        // ========================================
+        window.addEventListener('load', function() {
+            console.log('👤 Market Pulse - Perfil do Usuário v2.0');
+            console.log('✅ Sistema carregado');
+            console.log('');
+            console.log('🆕 NOVIDADES v2.0:');
+            console.log('- ✅ Verificação de bloqueio automático');
+            console.log('- ✅ Exclusão de conta implementada');
+            console.log('- ✅ Informações pessoais não editáveis (exceto telefone)');
+            console.log('- ✅ Toggle de tooltips adicionado');
+            console.log('- ✅ Botão Academy implementado');
+            console.log('- ✅ Termos e Privacidade completos');
+            console.log('- ✅ Mensagens enviadas ao admin');
+            console.log('');
+            
+            loadProfile();
+        });
+
+        // Expor DB globalmente para debug
+        window.DB = DB;
+    </script>
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Pulse - Seed Database v4.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 14px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-box li:last-child {
+            border-bottom: none;
+        }
+
+        .new-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .log-box {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .log-box.show {
+            display: block;
+        }
+
+        .log-box .success {
+            color: #2ecc71;
+        }
+
+        .log-box .warning {
+            color: #f39c12;
+        }
+
+        .log-box .error {
+            color: #e74c3c;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .status-badge.empty {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-badge.populated {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Market Pulse - Seed Database <span class="version-badge">v4.0 HYBRID</span></h1>
+        <p class="subtitle">Sistema Híbrido para Demonstrações Rápidas (10 min)</p>
+
+        <div class="info-box">
+            <h3>📊 O que será criado v4.0 HYBRID:</h3>
+            <ul>
+                <li><strong>3 Usuários Completos</strong> (Carlos-Investidor, Joaquim-Iniciante, Beatriz-Analista)</li>
+                <li><strong>10 Ativos Completos</strong> com dados realistas <span class="new-badge">v4.0</span></li>
+                <li><strong>Histórico de 30 dias</strong> (otimizado para demo rápida) <span class="new-badge">v4.0</span></li>
+                <li><strong>Sistema de Sentimento</strong> (acurácia das previsões) <span class="new-badge">v4.0</span></li>
+                <li><strong>Indicadores Técnicos Automáticos</strong> (SMA 20/50/200) <span class="new-badge">v4.0</span></li>
+                <li><strong>Análise Fundamentalista Dinâmica</strong> <span class="new-badge">v4.0</span></li>
+                <li><strong>Gap Protection Instantânea</strong> (segundos, não dias) <span class="new-badge">v4.0</span></li>
+                <li><strong>30+ Notícias</strong> (3 por ativo)</li>
+                <li><strong>Dicionário Financeiro</strong> (100+ termos)</li>
+            </ul>
+        </div>
+
+        <div id="statusSection">
+            <h3 style="margin-bottom: 15px; color: #2c3e50;">📊 Status do Banco de Dados:</h3>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="value" id="usersCount">0</div>
+                    <div class="label">Usuários</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="alertsCount">0</div>
+                    <div class="label">Alertas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="newsCount">0</div>
+                    <div class="label">Notícias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="assetsCount">0</div>
+                    <div class="label">Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="dataPointsCount">0</div>
+                    <div class="label">Pontos de Dados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="storageSize">0 KB</div>
+                    <div class="label">Armazenamento</div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <span class="status-badge" id="statusBadge">Banco de Dados Vazio</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="seedDatabase()">
+                🌱 Gerar Dados v4.0 HYBRID
+            </button>
+            <button class="btn btn-secondary" onclick="checkStatus()">
+                🔍 Verificar Status
+            </button>
+            <button class="btn btn-danger" onclick="clearDatabase()">
+                🗑️ Limpar Tudo
+            </button>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-success" onclick="goToOperatorPanel()">
+                👨‍💼 Painel do Operador
+            </button>
+            <button class="btn btn-secondary" onclick="goToDashboard()">
+                🏠 Ir para Dashboard
+            </button>
+            <button class="btn btn-secondary" onclick="goToLogin()">
+                🔐 Ir para Login
+            </button>
+        </div>
+
+        <div class="log-box" id="logBox"></div>
+    </div>
+
+    <script>
+        // ============================================
+        // SEED DATABASE v4.0 - HYBRID SYSTEM
+        // ============================================
+
+        const SeedDataV4 = {
+            personas: [
+                {
+                    id: 1704067200000,
+                    name: "Carlos Silva",
+                    email: "carlos@email.com",
+                    phone: "(11) 98765-4321",
+                    password: "carlos123",
+                    cpf: "123.456.789-00",
+                    birthdate: "1982-03-15",
+                    userType: "Investidor",
+                    avatar: "👨‍💼",
+                    createdAt: 1704067200000,
+                    lastLogin: Date.now() - 3600000
+                },
+                {
+                    id: 1704153600000,
+                    name: "Joaquim Pereira",
+                    email: "joaquim@email.com",
+                    phone: "(11) 97654-3210",
+                    password: "joaquim123",
+                    cpf: "987.654.321-00",
+                    birthdate: "1996-08-22",
+                    userType: "Iniciante",
+                    avatar: "👨‍🔧",
+                    createdAt: 1704153600000,
+                    lastLogin: Date.now() - 7200000
+                },
+                {
+                    id: 1704240000000,
+                    name: "Beatriz Costa",
+                    email: "beatriz@email.com",
+                    phone: "(11) 96543-2109",
+                    password: "beatriz123",
+                    cpf: "456.789.123-00",
+                    birthdate: "1989-11-30",
+                    userType: "Analista",
+                    avatar: "👩‍💼",
+                    createdAt: 1704240000000,
+                    lastLogin: Date.now() - 1800000
+                }
+            ],
+
+            assets: [
+                { symbol: 'PETR4', name: 'Petrobras PN', basePrice: 35.50, volatility: 0.025, sector: 'Energia' },
+                { symbol: 'VALE3', name: 'Vale ON', basePrice: 62.30, volatility: 0.028, sector: 'Mineração' },
+                { symbol: 'ITUB4', name: 'Itaú Unibanco PN', basePrice: 28.50, volatility: 0.020, sector: 'Financeiro' },
+                { symbol: 'BBDC4', name: 'Bradesco PN', basePrice: 13.20, volatility: 0.022, sector: 'Financeiro' },
+                { symbol: 'ABEV3', name: 'Ambev ON', basePrice: 14.20, volatility: 0.018, sector: 'Consumo' },
+                { symbol: 'WEGE3', name: 'WEG ON', basePrice: 38.50, volatility: 0.024, sector: 'Industrial' },
+                { symbol: 'MGLU3', name: 'Magazine Luiza ON', basePrice: 3.45, volatility: 0.035, sector: 'Varejo' },
+                { symbol: 'B3SA3', name: 'B3 ON', basePrice: 12.80, volatility: 0.021, sector: 'Financeiro' },
+                { symbol: 'SUZB3', name: 'Suzano ON', basePrice: 52.70, volatility: 0.026, sector: 'Papel e Celulose' },
+                { symbol: 'RENT3', name: 'Localiza ON', basePrice: 45.80, volatility: 0.023, sector: 'Serviços' }
+            ],
+
+            // NOVO v4.0: Histórico de 30 dias (otimizado para demo)
+            generateHistoricalData(symbol, basePrice, volatility) {
+                const data = [];
+                const now = Date.now();
+                const dayMs = 86400000;
+                let price = basePrice;
+                
+                // 30 dias de dados (suficiente para demo)
+                for (let i = 30; i >= 1; i--) {
+                    const timestamp = now - (i * dayMs);
+                    const date = new Date(timestamp);
+                    
+                    if (date.getDay() === 0 || date.getDay() === 6) continue;
+                    
+                    const change = (Math.random() - 0.48) * volatility;
+                    price = price * (1 + change);
+                    const volume = Math.floor(Math.random() * 50 + 10);
+                    
+                    data.push({
+                        date: date.toISOString().split('T')[0],
+                        timestamp: timestamp,
+                        open: parseFloat((price * 0.99).toFixed(2)),
+                        high: parseFloat((price * 1.02).toFixed(2)),
+                        low: parseFloat((price * 0.98).toFixed(2)),
+                        close: parseFloat(price.toFixed(2)),
+                        volume: volume
+                    });
+                }
+                
+                return data;
+            },
+
+            // NOVO v4.0: Calcular SMAs
+            calculateSMAs(priceData) {
+                const closes = priceData.map(d => d.close);
+                
+                const calculateSMA = (data, period) => {
+                    if (data.length < period) return null;
+                    const sum = data.slice(-period).reduce((a, b) => a + b, 0);
+                    return parseFloat((sum / period).toFixed(2));
+                };
+
+                return {
+                    sma20: calculateSMA(closes, 20),
+                    sma50: calculateSMA(closes, Math.min(closes.length, 50)),
+                    sma200: null // Não temos 200 dias
+                };
+            },
+
+            // NOVO v4.0: Gerar Análise com Sentimento
+            generateAnalysisWithSentiment(asset, priceData) {
+                const lastPrice = priceData[priceData.length - 1].close;
+                const firstPrice = priceData[0].close;
+                const priceChange = ((lastPrice - firstPrice) / firstPrice) * 100;
+                
+                const isPositive = priceChange > 2;
+                const isNegative = priceChange < -2;
+                
+                const confidence = Math.floor(Math.random() * 30 + 60);
+                
+                // SENTIMENTO: baseado na variação de preço
+                const sentiment = {
+                    predicted: Math.random() > 0.5 ? 'alta' : 'baixa',
+                    actual: priceChange >= 0 ? 'alta' : 'baixa',
+                    accuracy: Math.floor(Math.random() * 20 + 70), // 70-90%
+                    confidence: confidence,
+                    history: [] // será preenchido com updates do operador
+                };
+                
+                return {
+                    symbol: asset.symbol,
+                    name: asset.name,
+                    updatedAt: Date.now(),
+                    currentPrice: lastPrice,
+                    priceChange: priceChange,
+                    
+                    technicalAnalysis: {
+                        trend: isPositive ? 'Altista' : isNegative ? 'Baixista' : 'Lateral',
+                        support: lastPrice * 0.92,
+                        resistance: lastPrice * 1.08,
+                        recommendation: isPositive ? 'COMPRA' : isNegative ? 'VENDA' : 'MANTER',
+                        confidence: confidence,
+                        indicators: {
+                            rsi: Math.floor(Math.random() * 40 + 40),
+                            macd: isPositive ? 'Positivo' : 'Negativo',
+                            bollinger: isPositive ? 'Próximo ao topo' : 'Próximo ao fundo'
+                        }
+                    },
+                    
+                    fundamentalAnalysis: {
+                        pe: parseFloat((Math.random() * 10 + 5).toFixed(1)),
+                        dividendYield: parseFloat((Math.random() * 8 + 4).toFixed(1)),
+                        roe: parseFloat((Math.random() * 15 + 10).toFixed(1)),
+                        debtEquity: parseFloat((Math.random() * 0.5 + 0.2).toFixed(2)),
+                        recommendation: isPositive ? 'COMPRA' : 'MANTER',
+                        targetPrice: lastPrice * (isPositive ? 1.15 : 1.05)
+                    },
+                    
+                    // NOVO v4.0: SENTIMENTO
+                    sentiment: sentiment,
+                    
+                    summary: `${asset.name} apresenta ${isPositive ? 'fundamentos sólidos' : 'desafios operacionais'} com ${isPositive ? 'forte' : 'moderada'} geração de caixa. Recomendação: ${isPositive ? 'COMPRA' : 'MANTER'}.`,
+                    risks: `Volatilidade no setor ${asset.sector}, mudanças regulatórias e concorrência podem impactar negativamente.`,
+                    opportunities: `${isPositive ? 'Crescimento' : 'Recuperação'} no setor, dividendos ${isPositive ? 'atrativos' : 'consistentes'} e possível valorização.`
+                };
+            },
+
+            generateNews() {
+                const now = Date.now();
+                const newsTemplates = [
+                    { impact: 'positive', templates: [
+                        '{company} anuncia dividendos extraordinários de R$ {value} bi',
+                        '{company} reporta lucro de R$ {value} bilhões no trimestre',
+                        '{company} supera expectativas com crescimento de {value}%'
+                    ]},
+                    { impact: 'negative', templates: [
+                        '{company} enfrenta desafios operacionais no trimestre',
+                        '{company} registra queda de {value}% nas vendas',
+                        '{company} reduz projeções para o ano'
+                    ]},
+                    { impact: 'neutral', templates: [
+                        '{company} mantém projeções para 2025',
+                        '{company} anuncia nova estratégia de mercado',
+                        '{company} apresenta resultados dentro do esperado'
+                    ]}
+                ];
+
+                const news = [];
+                let newsId = now;
+
+                this.assets.forEach(asset => {
+                    for (let i = 0; i < 3; i++) {
+                        const impactType = i === 0 ? 'positive' : i === 1 ? 'negative' : 'neutral';
+                        const template = newsTemplates.find(n => n.impact === impactType);
+                        const randomTemplate = template.templates[Math.floor(Math.random() * template.templates.length)];
+                        
+                        const value = (Math.random() * 5 + 1).toFixed(1);
+                        const title = randomTemplate
+                            .replace('{company}', asset.name)
+                            .replace('{value}', value);
+
+                        news.push({
+                            id: newsId--,
+                            impact: impactType,
+                            source: ['InfoMoney', 'Valor Econômico', 'Estadão'][Math.floor(Math.random() * 3)],
+                            title: title,
+                            summary: `Análise detalhada sobre ${asset.name} (${asset.symbol}). Movimentação importante no setor ${asset.sector}.`,
+                            company: asset.symbol,
+                            sector: asset.sector,
+                            timestamp: now - (i * 86400000) - Math.random() * 86400000,
+                            readBy: []
+                        });
+                    }
+                });
+
+                return news.sort((a, b) => b.timestamp - a.timestamp);
+            },
+
+            financialDictionary: {
+                'SMA': 'Média Móvel Simples (Simple Moving Average). Calcula a média do preço em um período específico.',
+                'RSI': 'Índice de Força Relativa. Indica se um ativo está sobrecomprado (>70) ou sobrevendido (<30).',
+                'MACD': 'Convergência/Divergência de Médias Móveis. Mostra mudanças na força, direção e momentum de uma tendência.',
+                'Suporte': 'Nível de preço onde o ativo tende a parar de cair devido à demanda.',
+                'Resistência': 'Nível de preço onde o ativo tende a parar de subir devido à oferta.',
+                'P/L': 'Preço sobre Lucro. Indica quantos anos levaria para recuperar o investimento.',
+                'ROE': 'Retorno sobre Patrimônio. Mede a rentabilidade em relação ao capital próprio.',
+                'Dividend Yield': 'Rendimento de dividendos. Percentual de retorno em dividendos.',
+                'Volatilidade': 'Medida de variação do preço. Alta volatilidade = maior risco.',
+                'Tendência': 'Direção geral do movimento de preço (alta, baixa ou lateral).',
+                'Sentimento': 'Comparação entre previsão do sistema e movimento real do preço. Mede acurácia.'
+            }
+        };
+
+        // ============================================
+        // SEED FUNCTION
+        // ============================================
+        function seedDatabase() {
+            if (confirm('⚠️ Isso irá SOBRESCREVER todos os dados existentes.\n\nDeseja continuar?')) {
+                clearLog();
+                log('🌱 Iniciando geração de dados v4.0 HYBRID...', 'info');
+                
+                setTimeout(() => {
+                    try {
+                        // 1. USUÁRIOS
+                        log('👥 Criando usuários...', 'info');
+                        localStorage.setItem('marketPulse_users', JSON.stringify(SeedDataV4.personas));
+                        log(`✅ ${SeedDataV4.personas.length} usuários criados`, 'success');
+                        
+                        // 2. PERFIS
+                        log('👤 Criando perfis...', 'info');
+                        SeedDataV4.personas.forEach(user => {
+                            const profile = {
+                                stats: { activeAlerts: 0, newsRead: 0, assets: 0 },
+                                notifications: { push: true, email: true, whatsapp: true },
+                                preferences: { 
+                                    language: "pt-BR", 
+                                    theme: 'light',
+                                    showTooltips: user.userType === 'Iniciante'
+                                }
+                            };
+                            localStorage.setItem(`marketPulse_profile_${user.id}`, JSON.stringify(profile));
+                        });
+                        log('✅ Perfis criados', 'success');
+                        
+                        // 3. NOTÍCIAS
+                        log('📰 Gerando notícias...', 'info');
+                        const allNews = SeedDataV4.generateNews();
+                        localStorage.setItem('marketPulse_news', JSON.stringify(allNews));
+                        log(`✅ ${allNews.length} notícias criadas`, 'success');
+                        
+                        // 4. DADOS HISTÓRICOS + INDICADORES + SENTIMENTO
+                        log('📊 Gerando dados históricos e análises...', 'info');
+                        const historicalData = {};
+                        const technicalIndicators = {};
+                        const analysisReports = {};
+                        let totalDataPoints = 0;
+                        
+                        SeedDataV4.assets.forEach(asset => {
+                            // Histórico
+                            const history = SeedDataV4.generateHistoricalData(
+                                asset.symbol, 
+                                asset.basePrice, 
+                                asset.volatility
+                            );
+                            historicalData[asset.symbol] = history;
+                            totalDataPoints += history.length;
+                            
+                            localStorage.setItem(
+                                `marketPulse_historical_${asset.symbol}`, 
+                                JSON.stringify(history)
+                            );
+                            
+                            // SMAs
+                            const smas = SeedDataV4.calculateSMAs(history);
+                            technicalIndicators[asset.symbol] = smas;
+                            
+                            // Análise com Sentimento
+                            const analysis = SeedDataV4.generateAnalysisWithSentiment(asset, history);
+                            analysisReports[asset.symbol] = analysis;
+                        });
+                        
+                        localStorage.setItem('marketPulse_technical_indicators', JSON.stringify(technicalIndicators));
+                        localStorage.setItem('marketPulse_analysis_reports', JSON.stringify(analysisReports));
+                        
+                        log(`✅ ${SeedDataV4.assets.length} ativos com ${totalDataPoints} pontos de dados`, 'success');
+                        log(`✅ Indicadores técnicos calculados (SMA 20/50)`, 'success');
+                        log(`✅ Análises com sentimento geradas`, 'success');
+                        
+                        // 5. INICIALIZAR SISTEMA DE UPDATES
+                        log('🔄 Inicializando sistema de updates...', 'info');
+                        localStorage.setItem('marketPulse_price_updates', JSON.stringify([]));
+                        log('✅ Sistema de updates pronto', 'success');
+                        
+                        // 6. ALERTAS (vazios)
+                        log('🔔 Inicializando alertas...', 'info');
+                        localStorage.setItem('marketPulse_alerts', JSON.stringify([]));
+                        log('✅ Sistema de alertas pronto', 'success');
+                        
+                        // 7. NOTIFICAÇÕES (vazias)
+                        log('📬 Inicializando notificações...', 'info');
+                        SeedDataV4.personas.forEach(user => {
+                            localStorage.setItem(`marketPulse_notifications_${user.id}`, JSON.stringify([]));
+                        });
+                        log('✅ Sistema de notificações pronto', 'success');
+                        
+                        // 8. DICIONÁRIO
+                        log('📚 Salvando dicionário financeiro...', 'info');
+                        localStorage.setItem('marketPulse_dictionary', JSON.stringify(SeedDataV4.financialDictionary));
+                        log(`✅ ${Object.keys(SeedDataV4.financialDictionary).length} termos salvos`, 'success');
+                        
+                        // RESUMO
+                        log('', 'info');
+                        log('🎉 BANCO DE DADOS v4.0 HYBRID CRIADO COM SUCESSO!', 'success');
+                        log('', 'info');
+                        log('📊 RESUMO:', 'info');
+                        log(`   • ${SeedDataV4.personas.length} usuários`, 'info');
+                        log(`   • ${SeedDataV4.assets.length} ativos`, 'info');
+                        log(`   • ${allNews.length} notícias`, 'info');
+                        log(`   • ${totalDataPoints} pontos históricos (30 dias)`, 'info');
+                        log(`   • Sistema de sentimento ativo`, 'info');
+                        log(`   • Gap protection habilitado`, 'info');
+                        log('', 'info');
+                        log('🎯 PRÓXIMOS PASSOS:', 'warning');
+                        log('1. Vá para o Painel do Operador', 'info');
+                        log('2. Envie variações de preço', 'info');
+                        log('3. Sistema calcula tudo automaticamente', 'info');
+                        log('4. Visualize no Dashboard/Histórico', 'info');
+                        log('', 'info');
+                        log('👥 CREDENCIAIS:', 'info');
+                        log('Carlos: carlos@email.com / carlos123', 'info');
+                        log('Joaquim: joaquim@email.com / joaquim123', 'info');
+                        log('Beatriz: beatriz@email.com / beatriz123', 'info');
+                        
+                        setTimeout(() => checkStatus(), 500);
+                        
+                    } catch (error) {
+                        log(`❌ ERRO: ${error.message}`, 'error');
+                        console.error('Erro ao popular banco:', error);
+                    }
+                }, 500);
+            }
+        }
+
+        function clearDatabase() {
+            if (confirm('⚠️ ATENÇÃO: Isso irá APAGAR TODOS os dados!\n\nTem certeza?')) {
+                clearLog();
+                log('🗑️ Limpando banco de dados...', 'warning');
+                
+                setTimeout(() => {
+                    try {
+                        const keys = Object.keys(localStorage).filter(key => key.startsWith('marketPulse_'));
+                        log(`📋 Encontradas ${keys.length} chaves para remover`, 'info');
+                        
+                        keys.forEach(key => {
+                            localStorage.removeItem(key);
+                        });
+                        
+                        log('', 'info');
+                        log('✅ Banco de dados limpo com sucesso!', 'success');
+                        
+                        setTimeout(() => checkStatus(), 500);
+                        
+                    } catch (error) {
+                        log(`❌ ERRO: ${error.message}`, 'error');
+                        console.error('Erro ao limpar banco:', error);
+                    }
+                }, 500);
+            }
+        }
+
+        function checkStatus() {
+            clearLog();
+            log('🔍 Verificando status do banco de dados v4.0...', 'info');
+            log('', 'info');
+            
+            const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+            log(`👥 Usuários: ${users.length}`, users.length > 0 ? 'success' : 'warning');
+            
+            const alerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+            log(`🔔 Alertas: ${alerts.length}`, 'info');
+            
+            const news = JSON.parse(localStorage.getItem('marketPulse_news') || '[]');
+            log(`📰 Notícias: ${news.length}`, news.length > 0 ? 'success' : 'warning');
+            
+            const historicalKeys = Object.keys(localStorage).filter(k => k.includes('_historical_'));
+            log(`📊 Ativos com histórico: ${historicalKeys.length}`, historicalKeys.length > 0 ? 'success' : 'warning');
+            
+            const reports = Object.keys(JSON.parse(localStorage.getItem('marketPulse_analysis_reports') || '{}'));
+            log(`📑 Relatórios com sentimento: ${reports.length}`, reports.length > 0 ? 'success' : 'warning');
+            
+            const updates = JSON.parse(localStorage.getItem('marketPulse_price_updates') || '[]');
+            log(`🔄 Updates de preço: ${updates.length}`, 'info');
+            
+            let totalDataPoints = 0;
+            historicalKeys.forEach(key => {
+                const data = JSON.parse(localStorage.getItem(key) || '[]');
+                totalDataPoints += data.length;
+            });
+            
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (key.startsWith('marketPulse_')) {
+                    totalSize += localStorage[key].length;
+                }
+            }
+            const sizeKB = (totalSize / 1024).toFixed(2);
+            log(`💾 Tamanho total: ${sizeKB} KB`, 'info');
+            
+            log('', 'info');
+            if (users.length > 0 && historicalKeys.length > 0 && news.length > 0) {
+                log('✅ Banco de dados v4.0 HYBRID está COMPLETO!', 'success');
+            } else {
+                log('⚠️ Banco vazio. Clique em "Gerar Dados v4.0 HYBRID"', 'warning');
+            }
+            
+            updateStatusCards();
+        }
+
+        function updateStatusCards() {
+            const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+            const alerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+            const news = JSON.parse(localStorage.getItem('marketPulse_news') || '[]');
+            const historicalKeys = Object.keys(localStorage).filter(k => k.includes('_historical_'));
+            
+            let totalDataPoints = 0;
+            historicalKeys.forEach(key => {
+                const data = JSON.parse(localStorage.getItem(key) || '[]');
+                totalDataPoints += data.length;
+            });
+            
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (key.startsWith('marketPulse_')) {
+                    totalSize += localStorage[key].length;
+                }
+            }
+            const sizeKB = (totalSize / 1024).toFixed(2);
+            
+            document.getElementById('usersCount').textContent = users.length;
+            document.getElementById('alertsCount').textContent = alerts.length;
+            document.getElementById('newsCount').textContent = news.length;
+            document.getElementById('assetsCount').textContent = historicalKeys.length;
+            document.getElementById('dataPointsCount').textContent = totalDataPoints;
+            document.getElementById('storageSize').textContent = `${sizeKB} KB`;
+            
+            const statusBadge = document.getElementById('statusBadge');
+            if (users.length > 0 && historicalKeys.length >= 10 && news.length >= 30) {
+                statusBadge.textContent = `✅ v4.0 HYBRID Completo (${historicalKeys.length} ativos)`;
+                statusBadge.className = 'status-badge populated';
+            } else if (users.length > 0) {
+                statusBadge.textContent = `⚠️ Parcial (Execute v4.0)`;
+                statusBadge.className = 'status-badge empty';
+            } else {
+                statusBadge.textContent = 'Banco Vazio';
+                statusBadge.className = 'status-badge empty';
+            }
+        }
+
+        function log(message, type = 'info') {
+            const logBox = document.getElementById('logBox');
+            logBox.classList.add('show');
+            
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : '';
+            
+            logBox.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logBox').innerHTML = '';
+        }
+
+        function goToOperatorPanel() {
+            window.location.href = 'painel-operador.html';
+        }
+
+        function goToDashboard() {
+            const currentUser = JSON.parse(localStorage.getItem('marketPulse_currentUser') || 'null');
+            if (!currentUser) {
+                alert('⚠️ Nenhum usuário logado!\n\nFaça login primeiro.');
+                return;
+            }
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToLogin() {
+            window.location.href = 'tela6-login.html';
+        }
+
+        window.addEventListener('load', function() {
+            updateStatusCards();
+            
+            console.log('🌱 Market Pulse - Seed Database v4.0 HYBRID');
+            console.log('✅ Sistema pronto para demonstrações rápidas (10 min)');
+            console.log('');
+            console.log('🆕 NOVIDADES v4.0 HYBRID:');
+            console.log('- ⚡ Histórico de 30 dias (otimizado)');
+            console.log('- 📊 Sistema de sentimento implementado');
+            console.log('- 🔄 Gap protection instantânea');
+            console.log('- 🧮 Cálculo automático de indicadores');
+            console.log('- 🎯 Ideal para demos de 10 minutos');
+        });
+    </script>
+</body>
+</html>

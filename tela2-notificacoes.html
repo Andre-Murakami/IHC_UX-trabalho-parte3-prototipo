@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Meus Alertas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 101;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+        }
+
+        .new-alert-btn {
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .new-alert-btn:active {
+            transform: scale(0.95);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 80px;
+            margin-top: 100px;
+        }
+
+        .stats-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .alert-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .asset-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background: #e8f4f8; color: #3498db; }
+        .icon-yellow { background: #fff8e8; color: #f39c12; }
+        .icon-red { background: #ffe8e8; color: #e74c3c; }
+        .icon-green { background: #e8f5e9; color: #27ae60; }
+
+        .asset-info {
+            flex: 1;
+        }
+
+        .asset-name {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .asset-fullname {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .alert-status {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-active { color: #27ae60; }
+        .status-inactive { color: #999; }
+
+        .alert-condition {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .condition-title {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .condition-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .condition-value.negative {
+            color: #e74c3c;
+        }
+
+        .condition-value.positive {
+            color: #27ae60;
+        }
+
+        .notification-channels {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .channel-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .whatsapp { background: #25D366; }
+        .email { background: #EA4335; }
+        .app { background: #3498db; }
+
+        .alert-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .triggered-badge {
+            background: #e8f4f8;
+            color: #3498db;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+
+        .edit-btn {
+            background: #e8f4f8;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .delete-btn {
+            background: #ffe8e8;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .empty-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 380px;
+            width: 100%;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .type-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            background: white;
+        }
+
+        .type-option.selected {
+            background: #e8f4f8;
+            border-color: #3498db;
+        }
+
+        .type-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .type-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .type-option.selected .type-label {
+            color: #3498db;
+        }
+
+        .variation-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .variation-input input {
+            width: 90px;
+            padding: 10px;
+            text-align: center;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .variation-input input:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .variation-hint {
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .reset-counter-btn {
+            width: 100%;
+            padding: 10px;
+            background: #fff8e8;
+            border: 1px solid #f39c12;
+            border-radius: 8px;
+            color: #f39c12;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .reset-counter-btn:active {
+            transform: scale(0.98);
+        }
+
+        .channel-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .channel-option {
+            flex: 1;
+            padding: 12px 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .channel-option.selected.whatsapp-channel {
+            background: #e8f8f0;
+            border-color: #25D366;
+        }
+
+        .channel-option.selected.email-channel {
+            background: #fff0f0;
+            border-color: #EA4335;
+        }
+
+        .channel-option.selected.app-channel {
+            background: #e8f4f8;
+            border-color: #3498db;
+        }
+
+        .channel-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .channel-text {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 22px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* Confirmation Modal */
+        .confirm-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 320px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .confirm-header {
+            padding: 24px 20px 16px;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .confirm-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .confirm-message {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .confirm-actions {
+            display: flex;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .confirm-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            background: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .confirm-btn:first-child {
+            border-right: 1px solid #e0e0e0;
+            color: #666;
+        }
+
+        .confirm-btn:last-child {
+            color: #e74c3c;
+        }
+
+        .confirm-btn:active {
+            background: #f8f9fa;
+        }
+
+        /* Tooltip System */
+        .help-icon {
+            width: 18px;
+            height: 18px;
+            background: #e8f4f8;
+            color: #3498db;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .help-icon.show {
+            display: inline-flex;
+        }
+
+        .help-icon:active {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .tooltip-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 360px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tooltip-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .tooltip-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .tooltip-close:active {
+            background: #e0e0e0;
+        }
+
+        .tooltip-body {
+            padding: 20px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .tooltip-example {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+
+        .tooltip-example strong {
+            color: #3498db;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .nav-item.active {
+            background: #e8f4f8;
+            border-radius: 8px;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #3498db;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .status-bar {
+                padding-top: calc(8px + env(safe-area-inset-top));
+            }
+            
+            .header {
+                top: calc(44px + env(safe-area-inset-top));
+            }
+            
+            .main-content {
+                margin-top: calc(100px + env(safe-area-inset-top));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+        <div class="back-btn" onclick="goBack()">‹</div>
+        <div class="header-title">Meus Alertas</div>
+        <button class="new-alert-btn" onclick="openNewAlertModal()">+ Novo</button>
+    </div>
+
+    <div class="main-content">
+        <div class="stats-summary">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalAlertsCount">0</div>
+                    <div class="stat-label">
+                        Total
+                        <span class="help-icon" onclick="showTooltip('total-alertas')" id="helpTotalAlertas">ℹ️</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="activeAlertsCount">0</div>
+                    <div class="stat-label">
+                        Ativos
+                        <span class="help-icon" onclick="showTooltip('alertas-ativos')" id="helpAlertasAtivos">ℹ️</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="triggeredCount">0</div>
+                    <div class="stat-label">
+                        Disparados
+                        <span class="help-icon" onclick="showTooltip('alertas-disparados')" id="helpAlertasDisparados">ℹ️</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">
+                📋 Todos os Alertas
+                <span class="help-icon" onclick="showTooltip('lista-alertas')" id="helpListaAlertas">ℹ️</span>
+            </div>
+        </div>
+
+        <div id="alertsContainer"></div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">×</button>
+                <h2 class="modal-title" id="modalTitle">Criar Novo Alerta</h2>
+            </div>
+
+            <div class="modal-content">
+                <div class="form-group">
+                    <label class="form-label">
+                        Selecionar Ativo
+                        <span class="help-icon" onclick="showTooltip('selecionar-ativo')" id="helpSelecionarAtivo">ℹ️</span>
+                    </label>
+                    <select class="form-control" id="assetInput">
+                        <option value="">🔍 Escolha um ativo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Tipo de Alerta
+                        <span class="help-icon" onclick="showTooltip('tipo-alerta')" id="helpTipoAlerta">ℹ️</span>
+                    </label>
+                    <div class="type-selector">
+                        <div class="type-option selected" id="priceType" onclick="selectType('price')">
+                            <div class="type-icon">📊</div>
+                            <div class="type-label">Preço</div>
+                        </div>
+                        <div class="type-option" id="newsType" onclick="selectType('news')">
+                            <div class="type-icon">📰</div>
+                            <div class="type-label">Notícias</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="variationGroup">
+                    <label class="form-label">
+                        Variação de Preço
+                        <span class="help-icon" onclick="showTooltip('variacao-preco')" id="helpVariacao">ℹ️</span>
+                    </label>
+                    <div class="variation-input">
+                        <span style="font-size: 14px; color: #666;">Variação</span>
+                        <input type="number" value="1.0" min="-20" max="20" step="0.1" id="variationValue">
+                        <span style="font-size: 14px; color: #666;">%</span>
+                        <div class="variation-hint">-20% a +20% (negativo = queda, positivo = alta)</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Canais de Notificação
+                        <span class="help-icon" onclick="showTooltip('canais-notificacao')" id="helpCanais">ℹ️</span>
+                    </label>
+                    <div class="channel-selector">
+                        <div class="channel-option whatsapp-channel selected" id="whatsappChannel" onclick="toggleChannel('whatsapp')">
+                            <div class="channel-icon whatsapp">W</div>
+                            <span class="channel-text">WhatsApp</span>
+                        </div>
+                        <div class="channel-option email-channel" id="emailChannel" onclick="toggleChannel('email')">
+                            <div class="channel-icon email">✉</div>
+                            <span class="channel-text">E-mail</span>
+                        </div>
+                        <div class="channel-option app-channel selected" id="appChannel" onclick="toggleChannel('app')">
+                            <div class="channel-icon app">📱</div>
+                            <span class="channel-text">App</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="resetCounterGroup" style="display: none;">
+                    <button class="reset-counter-btn" onclick="resetTriggeredCount()">
+                        🔄 Zerar Contador de Disparos
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveAlert()">Salvar Alerta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal" onclick="closeConfirmModal()">
+        <div class="confirm-modal" onclick="event.stopPropagation()">
+            <div class="confirm-header">
+                <div class="confirm-icon">🗑️</div>
+                <div class="confirm-title">Excluir Alerta?</div>
+                <div class="confirm-message">Esta ação não pode ser desfeita. Tem certeza que deseja excluir este alerta?</div>
+            </div>
+            <div class="confirm-actions">
+                <button class="confirm-btn" onclick="closeConfirmModal()">Cancelar</button>
+                <button class="confirm-btn" onclick="confirmDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip Modal -->
+    <div class="modal-overlay" id="tooltipModal" onclick="closeTooltip()">
+        <div class="tooltip-modal" onclick="event.stopPropagation()">
+            <div class="tooltip-header">
+                <div class="tooltip-title" id="tooltipTitle">Ajuda</div>
+                <div class="tooltip-close" onclick="closeTooltip()">×</div>
+            </div>
+            <div class="tooltip-body" id="tooltipBody">
+                Informação...
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-label">Alertas</div>
+        </div>
+        <div class="nav-item" onclick="goToNews()">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Notícias</div>
+        </div>
+        <div class="nav-item" onclick="goToReport()">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Relatórios</div>
+        </div>
+        <div class="nav-item" onclick="goToProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // GLOBALS & TOOLTIP SYSTEM
+        // ========================================
+        let tooltipsEnabled = false;
+        let editingAlertId = null;
+        let deleteAlertId = null;
+
+        const tooltips = {
+            'total-alertas': {
+                title: '📊 Total de Alertas',
+                text: 'Quantidade total de alertas que você criou, incluindo ativos e inativos.',
+                example: '<strong>Dica:</strong> Você pode criar quantos alertas quiser! Cada ativo pode ter múltiplos alertas.'
+            },
+            'alertas-ativos': {
+                title: '🟢 Alertas Ativos',
+                text: 'Alertas que estão funcionando e podem gerar notificações quando as condições forem atingidas.',
+                example: '<strong>Importante:</strong> Somente alertas ativos disparam notificações. Você pode pausar e reativar quando quiser.'
+            },
+            'alertas-disparados': {
+                title: '🔔 Disparados',
+                text: 'Número total de vezes que seus alertas foram acionados e geraram notificações.',
+                example: '<strong>Exemplo:</strong> Se um alerta disparou 5 vezes, significa que a condição foi atingida 5 vezes.'
+            },
+            'lista-alertas': {
+                title: '📋 Lista de Alertas',
+                text: 'Aqui estão todos os seus alertas configurados. Você pode editar, pausar ou excluir cada um.',
+                example: '<strong>Ações disponíveis:</strong><br>✏️ Editar - Alterar condições<br>⏸️/▶️ Pausar/Ativar<br>🗑️ Excluir'
+            },
+            'selecionar-ativo': {
+                title: '🔍 Selecionar Ativo',
+                text: 'Escolha qual ação da bolsa você quer monitorar. A lista é atualizada automaticamente com os ativos disponíveis.',
+                example: '<strong>Exemplo:</strong> PETR4 = Petrobras, VALE3 = Vale, ITUB4 = Itaú'
+            },
+            'tipo-alerta': {
+                title: '📊 Tipo de Alerta',
+                text: 'Escolha entre dois tipos:<br><br>📊 <strong>Preço</strong>: Avisa quando o preço varia uma porcentagem específica<br><br>📰 <strong>Notícias</strong>: Avisa quando há notícias importantes sobre o ativo',
+                example: '<strong>Recomendação:</strong> Use alertas de Preço para day trade e Notícias para investimentos de longo prazo.'
+            },
+            'variacao-preco': {
+                title: '📈 Variação de Preço',
+                text: 'Defina a porcentagem de variação que você quer monitorar. Use valores negativos para quedas e positivos para altas.',
+                example: '<strong>Exemplos:</strong><br>• +2.5% = Avisa quando subir 2,5%<br>• -1.5% = Avisa quando cair 1,5%'
+            },
+            'canais-notificacao': {
+                title: '📱 Canais de Notificação',
+                text: 'Escolha como você quer receber os avisos. Você pode selecionar múltiplos canais simultaneamente.',
+                example: '<strong>Recomendado:</strong> Ative WhatsApp e App para não perder nenhum alerta importante!'
+            }
+        };
+
+        function showTooltip(key) {
+            if (!tooltipsEnabled) return;
+            
+            const tooltip = tooltips[key];
+            if (!tooltip) return;
+            
+            document.getElementById('tooltipTitle').textContent = tooltip.title;
+            document.getElementById('tooltipBody').innerHTML = 
+                tooltip.text + (tooltip.example ? '<div class="tooltip-example">' + tooltip.example + '</div>' : '');
+            
+            document.getElementById('tooltipModal').classList.add('show');
+        }
+
+        function closeTooltip() {
+            document.getElementById('tooltipModal').classList.remove('show');
+        }
+
+        function enableTooltips() {
+            tooltipsEnabled = true;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.add('show');
+            });
+        }
+
+        function disableTooltips() {
+            tooltipsEnabled = false;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.remove('show');
+            });
+        }
+
+        function checkTooltipSettings() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) return;
+            
+            const profile = JSON.parse(localStorage.getItem(`marketPulse_profile_${currentUser.id}`) || '{}');
+            
+            if (profile.preferences && profile.preferences.showTooltips) {
+                enableTooltips();
+            }
+        }
+
+        // ========================================
+        // DATABASE v4.0 - DYNAMIC ASSETS
+        // ========================================
+        const DB = {
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+            getAvailableAssets() {
+                // Busca a lista de ativos do localStorage (atualizada pelo seed-database)
+                const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                if (users.length === 0) {
+                    // Fallback: lista padrão caso seed não tenha sido executado
+                    return [
+                        { symbol: 'PETR4', name: 'Petrobras PN' },
+                        { symbol: 'VALE3', name: 'Vale ON' },
+                        { symbol: 'ITUB4', name: 'Itaú Unibanco PN' },
+                        { symbol: 'BBDC4', name: 'Bradesco PN' },
+                        { symbol: 'ABEV3', name: 'Ambev ON' },
+                        { symbol: 'WEGE3', name: 'WEG ON' },
+                        { symbol: 'MGLU3', name: 'Magazine Luiza ON' },
+                        { symbol: 'B3SA3', name: 'B3 ON' },
+                        { symbol: 'SUZB3', name: 'Suzano ON' },
+                        { symbol: 'RENT3', name: 'Localiza ON' }
+                    ];
+                }
+                
+                // Busca do SeedDataV3 ou histórico armazenado
+                const assetsList = [];
+                const keys = Object.keys(localStorage).filter(k => k.startsWith('marketPulse_historical_'));
+                
+                keys.forEach(key => {
+                    const symbol = key.replace('marketPulse_historical_', '');
+                    const data = JSON.parse(localStorage.getItem(key) || '[]');
+                    if (data.length > 0) {
+                        // Tenta buscar nome completo
+                        const assetNames = {
+                            'PETR4': 'Petrobras PN',
+                            'VALE3': 'Vale ON',
+                            'ITUB4': 'Itaú Unibanco PN',
+                            'BBDC4': 'Bradesco PN',
+                            'ABEV3': 'Ambev ON',
+                            'WEGE3': 'WEG ON',
+                            'MGLU3': 'Magazine Luiza ON',
+                            'B3SA3': 'B3 ON',
+                            'SUZB3': 'Suzano ON',
+                            'RENT3': 'Localiza ON'
+                        };
+                        assetsList.push({
+                            symbol: symbol,
+                            name: assetNames[symbol] || symbol
+                        });
+                    }
+                });
+                
+                return assetsList.sort((a, b) => a.symbol.localeCompare(b.symbol));
+            },
+            getUserAlerts(userId) {
+                const allAlerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                return allAlerts.filter(alert => alert.userId === userId);
+            },
+            saveAlert(alertData) {
+                const allAlerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                allAlerts.push(alertData);
+                localStorage.setItem('marketPulse_alerts', JSON.stringify(allAlerts));
+            },
+            updateAlert(alertId, updates) {
+                const allAlerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                const index = allAlerts.findIndex(a => a.id === alertId);
+                if (index !== -1) {
+                    allAlerts[index] = { ...allAlerts[index], ...updates };
+                    localStorage.setItem('marketPulse_alerts', JSON.stringify(allAlerts));
+                }
+            },
+            deleteAlert(alertId) {
+                const allAlerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                const filtered = allAlerts.filter(a => a.id !== alertId);
+                localStorage.setItem('marketPulse_alerts', JSON.stringify(filtered));
+            }
+        };
+
+        // ========================================
+        // UTILS
+        // ========================================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        function getRelativeDate(timestamp) {
+            const diff = Date.now() - timestamp;
+            const days = Math.floor(diff / 86400000);
+            if (days === 0) return 'hoje';
+            if (days === 1) return 'ontem';
+            if (days < 7) return `há ${days} dias`;
+            return new Date(timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }
+
+        // ========================================
+        // POPULATE ASSETS DROPDOWN
+        // ========================================
+        function populateAssetsDropdown() {
+            const assets = DB.getAvailableAssets();
+            const select = document.getElementById('assetInput');
+            
+            // Limpar opções existentes (exceto a primeira)
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar ativos dinamicamente
+            assets.forEach(asset => {
+                const option = document.createElement('option');
+                option.value = asset.symbol;
+                option.textContent = `${asset.symbol} - ${asset.name}`;
+                select.appendChild(option);
+            });
+        }
+
+        // ========================================
+        // LOAD ALERTS
+        // ========================================
+        function loadAlerts() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+
+            const alerts = DB.getUserAlerts(currentUser.id);
+            const container = document.getElementById('alertsContainer');
+            
+            const activeAlerts = alerts.filter(a => a.active).length;
+            const totalTriggered = alerts.reduce((sum, a) => sum + (a.triggeredCount || 0), 0);
+            
+            document.getElementById('totalAlertsCount').textContent = alerts.length;
+            document.getElementById('activeAlertsCount').textContent = activeAlerts;
+            document.getElementById('triggeredCount').textContent = totalTriggered;
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <div class="empty-title">Nenhum alerta configurado</div>
+                        <div class="empty-text">Crie seu primeiro alerta para receber<br>notificações sobre seus ativos favoritos</div>
+                        <button class="empty-btn" onclick="openNewAlertModal()">+ Criar Primeiro Alerta</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const sortedAlerts = alerts.sort((a, b) => {
+                if (a.active !== b.active) return b.active - a.active;
+                return b.createdAt - a.createdAt;
+            });
+            
+            container.innerHTML = sortedAlerts.map(alert => {
+                const variation = alert.variationPercentage || 0;
+                const isNegative = variation < 0;
+                
+                const iconColor = alert.type === 'price' 
+                    ? (isNegative ? 'icon-red' : 'icon-green')
+                    : (alert.active ? 'icon-yellow' : 'icon-red');
+                
+                const statusClass = alert.active ? 'status-active' : 'status-inactive';
+                const statusText = alert.active ? '🟢 Ativo' : '⚫ Inativo';
+                
+                const channelBadges = alert.channels.map(ch => {
+                    if (ch === 'whatsapp') return '<div class="channel-badge whatsapp">W</div>';
+                    if (ch === 'email') return '<div class="channel-badge email">✉</div>';
+                    if (ch === 'app') return '<div class="channel-badge app">📱</div>';
+                    return '';
+                }).join('');
+
+                const assetInitials = alert.asset.substring(0, 2);
+                
+                const conditionClass = isNegative ? 'negative' : variation > 0 ? 'positive' : '';
+                
+                return `
+                    <div class="alert-card">
+                        <div class="alert-header">
+                            <div class="asset-icon ${iconColor}">${assetInitials}</div>
+                            <div class="asset-info">
+                                <div class="asset-name">${alert.asset}</div>
+                                <div class="asset-fullname">${alert.assetName}</div>
+                            </div>
+                            <div class="alert-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="alert-condition">
+                            <div class="condition-title">${alert.type === 'price' ? 'Condição de Preço' : 'Tipo de Alerta'}</div>
+                            <div class="condition-value ${conditionClass}">${alert.condition}</div>
+                        </div>
+                        
+                        <div class="notification-channels">
+                            <span>Notificar via:</span>
+                            ${channelBadges}
+                        </div>
+                        
+                        <div class="alert-meta">
+                            <span>Criado ${getRelativeDate(alert.createdAt)}</span>
+                            <span class="triggered-badge">Disparado ${alert.triggeredCount || 0}x</span>
+                        </div>
+                        
+                        <div class="alert-actions">
+                            <button class="action-btn edit-btn" onclick="editAlert(${alert.id})">✏️ Editar</button>
+                            <button class="action-btn ${alert.active ? '' : 'edit-btn'}" onclick="toggleAlert(${alert.id})">
+                                ${alert.active ? '⏸️ Pausar' : '▶️ Ativar'}
+                            </button>
+                            <button class="action-btn delete-btn" onclick="showDeleteConfirmation(${alert.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========================================
+        // MODAL FUNCTIONS
+        // ========================================
+        function openNewAlertModal() {
+            editingAlertId = null;
+            document.getElementById('modalTitle').textContent = 'Criar Novo Alerta';
+            document.getElementById('assetInput').value = '';
+            document.getElementById('variationValue').value = '1.0';
+            
+            document.getElementById('priceType').classList.add('selected');
+            document.getElementById('newsType').classList.remove('selected');
+            document.getElementById('variationGroup').style.display = 'block';
+            
+            document.getElementById('whatsappChannel').classList.add('selected');
+            document.getElementById('emailChannel').classList.remove('selected');
+            document.getElementById('appChannel').classList.add('selected');
+            
+            document.getElementById('resetCounterGroup').style.display = 'none';
+            
+            populateAssetsDropdown();
+            
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            editingAlertId = null;
+        }
+
+        function selectType(type) {
+            document.getElementById('priceType').classList.remove('selected');
+            document.getElementById('newsType').classList.remove('selected');
+            document.getElementById(type + 'Type').classList.add('selected');
+            
+            document.getElementById('variationGroup').style.display = type === 'price' ? 'block' : 'none';
+        }
+
+        function toggleChannel(channel) {
+            document.getElementById(channel + 'Channel').classList.toggle('selected');
+        }
+
+        function resetTriggeredCount() {
+            if (!editingAlertId) return;
+            
+            if (confirm('🔄 Deseja zerar o contador de disparos?\n\nIsso não pode ser desfeito.')) {
+                DB.updateAlert(editingAlertId, { triggeredCount: 0 });
+                alert('✅ Contador zerado com sucesso!');
+                closeModal();
+                loadAlerts();
+            }
+        }
+
+        // ========================================
+        // SAVE ALERT
+        // ========================================
+        function saveAlert() {
+            const asset = document.getElementById('assetInput').value;
+            
+            if (!asset) {
+                alert('⚠️ Por favor, selecione um ativo!');
+                return;
+            }
+
+            const isPriceType = document.getElementById('priceType').classList.contains('selected');
+            const type = isPriceType ? 'price' : 'news';
+            
+            let condition = '';
+            let variationPercentage = null;
+            
+            if (isPriceType) {
+                variationPercentage = parseFloat(document.getElementById('variationValue').value);
+                
+                if (variationPercentage < -20 || variationPercentage > 20) {
+                    alert('⚠️ A variação deve estar entre -20% e +20%');
+                    return;
+                }
+                
+                if (variationPercentage === 0) {
+                    alert('⚠️ A variação não pode ser zero!');
+                    return;
+                }
+                
+                const sign = variationPercentage > 0 ? '>' : '<';
+                condition = `Variação ${sign} ${variationPercentage > 0 ? '+' : ''}${variationPercentage.toFixed(1)}%`;
+            } else {
+                condition = 'Notícias de Alto Impacto';
+            }
+
+            const channels = [];
+            if (document.getElementById('whatsappChannel').classList.contains('selected')) {
+                channels.push('whatsapp');
+            }
+            if (document.getElementById('emailChannel').classList.contains('selected')) {
+                channels.push('email');
+            }
+            if (document.getElementById('appChannel').classList.contains('selected')) {
+                channels.push('app');
+            }
+
+            if (channels.length === 0) {
+                alert('⚠️ Selecione pelo menos um canal de notificação!');
+                return;
+            }
+
+            const currentUser = DB.getCurrentUser();
+            const assets = DB.getAvailableAssets();
+            const selectedAsset = assets.find(a => a.symbol === asset);
+            
+            if (editingAlertId) {
+                DB.updateAlert(editingAlertId, {
+                    asset: asset,
+                    assetName: selectedAsset ? selectedAsset.name : asset,
+                    type: type,
+                    condition: condition,
+                    variationPercentage: variationPercentage,
+                    channels: channels
+                });
+                
+                alert('✅ Alerta atualizado com sucesso!');
+            } else {
+                const newAlert = {
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    asset: asset,
+                    assetName: selectedAsset ? selectedAsset.name : asset,
+                    type: type,
+                    condition: condition,
+                    variationPercentage: variationPercentage,
+                    channels: channels,
+                    active: true,
+                    createdAt: Date.now(),
+                    triggeredCount: 0
+                };
+
+                DB.saveAlert(newAlert);
+                alert('✅ Alerta criado com sucesso!');
+            }
+            
+            closeModal();
+            loadAlerts();
+        }
+
+        // ========================================
+        // EDIT ALERT
+        // ========================================
+        function editAlert(alertId) {
+            const currentUser = DB.getCurrentUser();
+            const alerts = DB.getUserAlerts(currentUser.id);
+            const alert = alerts.find(a => a.id === alertId);
+            
+            if (!alert) return;
+            
+            editingAlertId = alertId;
+            document.getElementById('modalTitle').textContent = 'Editar Alerta';
+            
+            populateAssetsDropdown();
+            document.getElementById('assetInput').value = alert.asset;
+            
+            if (alert.type === 'price') {
+                document.getElementById('priceType').classList.add('selected');
+                document.getElementById('newsType').classList.remove('selected');
+                document.getElementById('variationGroup').style.display = 'block';
+                document.getElementById('variationValue').value = alert.variationPercentage || 1.0;
+            } else {
+                document.getElementById('priceType').classList.remove('selected');
+                document.getElementById('newsType').classList.add('selected');
+                document.getElementById('variationGroup').style.display = 'none';
+            }
+            
+            document.getElementById('whatsappChannel').classList.toggle('selected', alert.channels.includes('whatsapp'));
+            document.getElementById('emailChannel').classList.toggle('selected', alert.channels.includes('email'));
+            document.getElementById('appChannel').classList.toggle('selected', alert.channels.includes('app'));
+            
+            document.getElementById('resetCounterGroup').style.display = 'block';
+            
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+
+        // ========================================
+        // TOGGLE ALERT
+        // ========================================
+        function toggleAlert(alertId) {
+            const currentUser = DB.getCurrentUser();
+            const alerts = DB.getUserAlerts(currentUser.id);
+            const alert = alerts.find(a => a.id === alertId);
+            
+            if (!alert) return;
+            
+            DB.updateAlert(alertId, { active: !alert.active });
+            loadAlerts();
+        }
+
+        // ========================================
+        // DELETE CONFIRMATION (POP-UP)
+        // ========================================
+        function showDeleteConfirmation(alertId) {
+            deleteAlertId = alertId;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            deleteAlertId = null;
+        }
+
+        function confirmDelete() {
+            if (!deleteAlertId) return;
+            
+            DB.deleteAlert(deleteAlertId);
+            closeConfirmModal();
+            loadAlerts();
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function goBack() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToHome() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToNews() {
+            window.location.href = 'tela3-noticias.html';
+        }
+        
+        function goToReport() {
+            window.location.href = 'tela5-historico.html';
+        }
+
+        function goToProfile() {
+            window.location.href = 'tela7-perfil.html';
+        }
+
+        // ========================================
+        // INIT
+        // ========================================
+        window.addEventListener('load', function() {
+            console.log('🔔 Market Pulse - Alertas v4.0 UPDATED');
+            console.log('✅ Sistema carregado');
+            console.log('');
+            console.log('📋 ATUALIZAÇÕES v4.0:');
+            console.log('1. ✅ Tooltips educacionais adicionados');
+            console.log('2. ✅ Tooltips habilitáveis/desabilitáveis pelo perfil');
+            console.log('3. ✅ Botão "Excluir" com texto ao lado do ícone');
+            console.log('4. ✅ Confirmação de exclusão em pop-up (não alert)');
+            console.log('5. ✅ Lista de ativos dinâmica (busca do seed-database)');
+            console.log('');
+            console.log('🔄 LISTA DINÂMICA:');
+            console.log('- Ativos carregados do localStorage');
+            console.log('- Atualização automática quando seed-database atualizar');
+            console.log('- Fallback para lista padrão se necessário');
+            
+            loadAlerts();
+            checkTooltipSettings();
+        });
+
+        // Expor funções globalmente
+        window.DB = DB;
+        window.enableTooltips = enableTooltips;
+        window.disableTooltips = disableTooltips;
+    </script>
+</body>
+</html>

@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 70%, #FFFFFF 100%);
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #ecf0f1;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+	.header-logo {
+	    width: 70px;          /* Ajustado para 30px (50px - 2 * 10px de padding) */
+	    height: 70px;         /* Ajustado para 30px (50px - 2 * 10px de padding) */
+	    object-fit: contain;  /* Mantido para ajuste da imagem */
+	    border-radius: 30%;   /* Formato circular */
+	    background: white;    /* Fundo branco */
+	    padding: 5px;       /* Padding de 10px ao redor do logo */
+	    box-sizing: content-box; /* Garante que o padding não afete o tamanho do círculo */
+	}        
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 11px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px;
+            user-select: none;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .forgot-password a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-social {
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 22px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+        }
+
+        .btn-social:active {
+            background: #f0f0f0;
+            transform: scale(0.97);
+        }
+
+        .switch-mode {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .switch-mode p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .switch-mode a {
+            color: #3498db;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            display: inline-block;
+        }
+
+        .features {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .features h3 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .feature-list {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background: #e8f4f8; }
+        .icon-yellow { background: #fff8e8; }
+        .icon-green { background: #e8f5e9; }
+
+        .feature-content h4 {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .feature-content p {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 11px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+            padding: 3px;
+            cursor: pointer;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .user-type-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .user-type-option {
+            flex: 1;
+            padding: 12px 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .user-type-option:active {
+            transform: scale(0.97);
+        }
+
+        .user-type-option.selected {
+            background: #e8f4f8;
+            border-color: #3498db;
+            border-width: 2px;
+        }
+
+        .user-type-option .icon {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .user-type-option .label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            padding: 5px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            margin-top: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group label {
+            font-size: 11px;
+            color: #666;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .checkbox-group label a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .checkbox-group label a:hover {
+            text-decoration: underline;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 1000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            animation: slideUp 0.3s ease;
+            max-width: 428px;
+            margin: 0 auto;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-content {
+            padding: 60px 20px 30px;
+            min-height: 100%;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            -webkit-appearance: none;
+        }
+
+        .close-btn:active {
+            background: #d0d0d0;
+            transform: scale(0.95);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LEGAL DOCUMENT MODAL */
+        .legal-content {
+            padding: 20px;
+        }
+
+        .legal-content h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .legal-content h3 {
+            font-size: 16px;
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .legal-content p {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .legal-content ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .legal-content li {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .legal-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .status-bar {
+                padding-top: calc(8px + env(safe-area-inset-top));
+            }
+            
+            .modal-card {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+    	<div class="header-title">
+	    <img src="logo.png" alt="Market Pulse Logo" class="header-logo">
+	</div>
+          <p>Alertas Inteligentes para Investidores</p>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="card" id="loginCard">
+            <h2 class="card-title">Bem-vindo!</h2>
+            <p class="card-subtitle">Entre com suas credenciais</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="✉️ seu.email@exemplo.com" required>
+                    <div class="error-message" id="loginEmailError">Email inválido</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="loginPassword" class="form-control" placeholder="🔒 ••••••••" required>
+                        <span class="toggle-password" onclick="togglePassword('loginPassword')">👁️</span>
+                    </div>
+                    <div class="error-message" id="loginPasswordError">Senha incorreta</div>
+                    <div class="forgot-password">
+                        <a href="#" onclick="showAlert('Funcionalidade em desenvolvimento'); return false;">Esqueceu a senha?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <div class="social-buttons">
+                <button class="btn-social" onclick="showAlert('Login com Google em desenvolvimento')">🔵 Google</button>
+                <button class="btn-social" onclick="showAlert('Login com Facebook em desenvolvimento')">🔘 Facebook</button>
+            </div>
+
+            <div class="switch-mode">
+                <p>Não tem uma conta?</p>
+                <a onclick="showSignup()">Criar conta grátis →</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>✨ Por que usar o Market Pulse?</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon icon-blue">🔔</div>
+                    <div class="feature-content">
+                        <h4>Alertas Inteligentes</h4>
+                        <p>Notificações em tempo real via WhatsApp</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon icon-yellow">🤖</div>
+                    <div class="feature-content">
+                        <h4>IA Avançada</h4>
+                        <p>Classificação automática de notícias</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon icon-green">📊</div>
+                    <div class="feature-content">
+                        <h4>Dados Integrados</h4>
+                        <p>MetaTrader 5 + InfoMoney unificados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Ao continuar, você concorda com nossos<br>
+            <a onclick="showTerms()">Termos de Uso</a> e <a onclick="showPrivacy()">Política de Privacidade</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupOverlay" class="overlay hidden" onclick="hideSignup()"></div>
+    <div id="signupCard" class="modal-card hidden">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideSignup()">✕</button>
+            
+            <h2 class="card-title">Criar Conta</h2>
+            <p class="card-subtitle">Comece a investir com inteligência</p>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" class="form-control" id="signupName" placeholder="👤 Seu nome" required>
+                    <div class="error-message" id="signupNameError">Nome é obrigatório</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="signupEmail" placeholder="✉️ seu.email@exemplo.com" required>
+                    <div class="error-message" id="signupEmailError">Email inválido ou já cadastrado</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone (WhatsApp)</label>
+                    <input type="tel" class="form-control" id="signupPhone" placeholder="📱 (11) 99999-9999" required>
+                    <div class="error-message" id="signupPhoneError">Telefone inválido</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signupPassword" class="form-control" placeholder="🔒 Mínimo 8 caracteres" required minlength="8">
+                        <span class="toggle-password" onclick="togglePassword('signupPassword')">👁️</span>
+                    </div>
+                    <div class="error-message" id="signupPasswordError">Senha deve ter mínimo 8 caracteres</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar Senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="🔒 Digite a senha novamente" required minlength="8">
+                    </div>
+                    <div class="error-message" id="confirmPasswordError">As senhas não coincidem</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Conta</label>
+                    <div class="user-type-selector">
+                        <div class="user-type-option selected" onclick="selectUserType(this)" data-type="Investidor">
+                            <div class="icon">💼</div>
+                            <div class="label">Investidor</div>
+                        </div>
+                        <div class="user-type-option" onclick="selectUserType(this)" data-type="Analista">
+                            <div class="icon">📊</div>
+                            <div class="label">Analista</div>
+                        </div>
+                        <div class="user-type-option" onclick="selectUserType(this)" data-type="Iniciante">
+                            <div class="icon">🎓</div>
+                            <div class="label">Iniciante</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">Li e aceito os <a onclick="showTerms(); event.stopPropagation();">Termos de Uso</a> e <a onclick="showPrivacy(); event.stopPropagation();">Política de Privacidade</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Criar Minha Conta</button>
+            </form>
+
+            <div class="switch-mode" style="margin-top: 20px;">
+                <p>Já tem uma conta?</p>
+                <a onclick="hideSignup()">← Voltar para Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div id="termsOverlay" class="overlay hidden" onclick="hideTerms()"></div>
+    <div id="termsCard" class="modal-card hidden">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideTerms()">✕</button>
+            
+            <div class="legal-content">
+                <h2>📜 Termos de Uso</h2>
+                <p><strong>Última atualização:</strong> Outubro de 2025</p>
+
+                <h3>1. Aceitação dos Termos</h3>
+                <p>Ao utilizar o Market Pulse, você concorda com estes Termos de Uso. Se não concordar, não utilize nossos serviços.</p>
+
+                <h3>2. Descrição do Serviço</h3>
+                <p>O Market Pulse é uma plataforma de alertas e análises financeiras que oferece:</p>
+                <ul>
+                    <li>Notificações em tempo real sobre ativos da bolsa de valores</li>
+                    <li>Análises técnicas e fundamentalistas automatizadas</li>
+                    <li>Classificação de notícias com inteligência artificial</li>
+                    <li>Integração com fontes de dados financeiros</li>
+                </ul>
+
+                <h3>3. Cadastro e Conta</h3>
+                <p>Você deve fornecer informações precisas e manter seus dados atualizados. É responsável por manter a confidencialidade de sua senha.</p>
+
+                <h3>4. Uso Aceitável</h3>
+                <p>Você concorda em:</p>
+                <ul>
+                    <li>Usar o serviço apenas para fins legais</li>
+                    <li>Não compartilhar sua conta com terceiros</li>
+                    <li>Não tentar acessar áreas restritas do sistema</li>
+                    <li>Não usar o serviço para manipulação de mercado</li>
+                </ul>
+
+                <h3>5. Isenção de Responsabilidade</h3>
+                <p><strong>IMPORTANTE:</strong> O Market Pulse fornece informações educacionais e ferramentas de análise. NÃO somos consultores financeiros. Nossas análises e alertas não constituem recomendações de investimento.</p>
+                <p>Você é o único responsável por suas decisões de investimento. Investimentos em renda variável envolvem riscos de perda patrimonial.</p>
+
+                <h3>6. Propriedade Intelectual</h3>
+                <p>Todo o conteúdo, design, código e funcionalidades do Market Pulse são de propriedade exclusiva da plataforma e protegidos por leis de direitos autorais.</p>
+
+                <h3>7. Modificações</h3>
+                <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Mudanças significativas serão notificadas por email.</p>
+
+                <h3>8. Rescisão</h3>
+                <p>Podemos suspender ou encerrar sua conta se você violar estes termos. Você pode encerrar sua conta a qualquer momento através das configurações de perfil.</p>
+
+                <h3>9. Limitação de Responsabilidade</h3>
+                <p>O Market Pulse não será responsável por perdas financeiras, lucros cessantes ou danos indiretos decorrentes do uso (ou impossibilidade de uso) do serviço.</p>
+
+                <h3>10. Lei Aplicável</h3>
+                <p>Estes termos são regidos pelas leis brasileiras. Foro: Comarca de São Paulo, SP.</p>
+
+                <div class="legal-footer">
+                    <p>Market Pulse - Alertas Inteligentes para Investidores<br>
+                    contato@marketpulse.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyOverlay" class="overlay hidden" onclick="hidePrivacy()"></div>
+    <div id="privacyCard" class="modal-card hidden">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hidePrivacy()">✕</button>
+            
+            <div class="legal-content">
+                <h2>🔒 Política de Privacidade</h2>
+                <p><strong>Última atualização:</strong> Outubro de 2025</p>
+
+                <h3>1. Informações que Coletamos</h3>
+                <p>Coletamos as seguintes informações:</p>
+                <ul>
+                    <li><strong>Dados de Cadastro:</strong> nome, email, telefone</li>
+                    <li><strong>Dados de Uso:</strong> alertas configurados, ativos monitorados, interações com o app</li>
+                    <li><strong>Dados Técnicos:</strong> endereço IP, tipo de dispositivo, navegador</li>
+                    <li><strong>Dados Financeiros:</strong> preferências de investimento, histórico de análises</li>
+                </ul>
+
+                <h3>2. Como Usamos suas Informações</h3>
+                <p>Utilizamos seus dados para:</p>
+                <ul>
+                    <li>Fornecer e melhorar nossos serviços</li>
+                    <li>Enviar notificações e alertas personalizados</li>
+                    <li>Realizar análises estatísticas e desenvolver novos recursos</li>
+                    <li>Comunicar atualizações e novidades da plataforma</li>
+                    <li>Garantir a segurança e prevenir fraudes</li>
+                </ul>
+
+                <h3>3. Compartilhamento de Dados</h3>
+                <p>Não vendemos seus dados pessoais. Podemos compartilhar informações apenas:</p>
+                <ul>
+                    <li>Com seu consentimento explícito</li>
+                    <li>Com prestadores de serviço essenciais (ex: servidores de hospedagem)</li>
+                    <li>Quando exigido por lei ou ordem judicial</li>
+                </ul>
+
+                <h3>4. Segurança</h3>
+                <p>Implementamos medidas de segurança técnicas e organizacionais:</p>
+                <ul>
+                    <li>Criptografia de dados sensíveis (HTTPS/TLS)</li>
+                    <li>Senhas armazenadas com hash criptográfico</li>
+                    <li>Backups regulares e redundância de servidores</li>
+                    <li>Monitoramento 24/7 contra acessos não autorizados</li>
+                </ul>
+
+                <h3>5. Cookies e Tecnologias Similares</h3>
+                <p>Utilizamos cookies para:</p>
+                <ul>
+                    <li>Manter você conectado (cookies de sessão)</li>
+                    <li>Lembrar suas preferências</li>
+                    <li>Analisar o uso da plataforma (cookies analíticos)</li>
+                </ul>
+                <p>Você pode gerenciar cookies nas configurações do seu navegador.</p>
+
+                <h3>6. Seus Direitos (LGPD)</h3>
+                <p>Você tem direito a:</p>
+                <ul>
+                    <li><strong>Acesso:</strong> saber quais dados pessoais armazenamos</li>
+                    <li><strong>Correção:</strong> atualizar dados incorretos ou desatualizados</li>
+                    <li><strong>Exclusão:</strong> solicitar a remoção de seus dados</li>
+                    <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado</li>
+                    <li><strong>Revogação:</strong> retirar consentimento a qualquer momento</li>
+                </ul>
+                <p>Para exercer seus direitos, entre em contato: <strong>privacidade@marketpulse.com</strong></p>
+
+                <h3>7. Retenção de Dados</h3>
+                <p>Mantemos seus dados enquanto sua conta estiver ativa. Após exclusão da conta, dados são removidos em até 30 dias, exceto quando exigido por lei.</p>
+
+                <h3>8. Menores de Idade</h3>
+                <p>Nossos serviços não são destinados a menores de 18 anos. Se identificarmos cadastro de menor, a conta será removida imediatamente.</p>
+
+                <h3>9. Transferência Internacional</h3>
+                <p>Seus dados são armazenados em servidores no Brasil. Se houver transferência internacional, garantiremos proteção adequada conforme LGPD.</p>
+
+                <h3>10. Alterações nesta Política</h3>
+                <p>Podemos atualizar esta política periodicamente. Mudanças significativas serão comunicadas por email com 30 dias de antecedência.</p>
+
+                <h3>11. Contato</h3>
+                <p>Dúvidas sobre privacidade? Entre em contato:</p>
+                <ul>
+                    <li><strong>Email:</strong> privacidade@marketpulse.com</li>
+                    <li><strong>Encarregado de Dados (DPO):</strong> dpo@marketpulse.com</li>
+                </ul>
+
+                <div class="legal-footer">
+                    <p>Market Pulse - Comprometidos com sua Privacidade<br>
+                    Conformidade com LGPD (Lei 13.709/2018)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // DATABASE v3.0
+        // ========================================
+        const DB = {
+            init() {
+                if (!localStorage.getItem('marketPulse_users')) {
+                    const demoUsers = [
+                        {
+                            id: 1704067200000,
+                            name: "Carlos Silva",
+                            email: "carlos@email.com",
+                            phone: "(11) 98765-4321",
+                            password: "carlos123",
+                            cpf: "123.456.789-00",
+                            birthdate: "1982-03-15",
+                            userType: "Investidor",
+                            avatar: "👨‍💼",
+                            createdAt: 1704067200000,
+                            lastLogin: null
+                        },
+                        {
+                            id: 1704153600000,
+                            name: "Joaquim Pereira",
+                            email: "joaquim@email.com",
+                            phone: "(11) 97654-3210",
+                            password: "joaquim123",
+                            cpf: "987.654.321-00",
+                            birthdate: "1996-08-22",
+                            userType: "Iniciante",
+                            avatar: "👨‍🔧",
+                            createdAt: 1704153600000,
+                            lastLogin: null
+                        },
+                        {
+                            id: 1704240000000,
+                            name: "Beatriz Costa",
+                            email: "beatriz@email.com",
+                            phone: "(11) 96543-2109",
+                            password: "beatriz123",
+                            cpf: "456.789.123-00",
+                            birthdate: "1989-11-30",
+                            userType: "Analista",
+                            avatar: "👩‍💼",
+                            createdAt: 1704240000000,
+                            lastLogin: null
+                        }
+                    ];
+                    localStorage.setItem('marketPulse_users', JSON.stringify(demoUsers));
+                    
+                    demoUsers.forEach(user => {
+                        const profile = {
+                            stats: { activeAlerts: 0, newsRead: 0, assets: 0 },
+                            notifications: { push: true, email: true, whatsapp: true },
+                            preferences: { 
+                                language: "pt-BR", 
+                                theme: user.userType === 'Iniciante' ? 'light' : 'light',
+                                showTooltips: user.userType === 'Iniciante'
+                            }
+                        };
+                        localStorage.setItem(`marketPulse_profile_${user.id}`, JSON.stringify(profile));
+                        localStorage.setItem(`marketPulse_watchlist_${user.id}`, JSON.stringify([]));
+                        localStorage.setItem(`marketPulse_notifications_${user.id}`, JSON.stringify([]));
+                    });
+                }
+            },
+
+            getUsers() {
+                const data = localStorage.getItem('marketPulse_users');
+                return data ? JSON.parse(data) : [];
+            },
+
+            saveUsers(users) {
+                localStorage.setItem('marketPulse_users', JSON.stringify(users));
+            },
+
+            findUserByEmail(email) {
+                const users = this.getUsers();
+                return users.find(u => u.email.toLowerCase() === email.toLowerCase());
+            },
+
+            createUser(userData) {
+                const users = this.getUsers();
+                const newUser = {
+                    id: Date.now(),
+                    ...userData,
+                    createdAt: Date.now(),
+                    lastLogin: null
+                };
+                users.push(newUser);
+                this.saveUsers(users);
+
+                const initialProfile = {
+                    stats: { activeAlerts: 0, newsRead: 0, assets: 0 },
+                    notifications: { push: true, email: true, whatsapp: true },
+                    preferences: { 
+                        language: "pt-BR", 
+                        theme: "light",
+                        showTooltips: userData.userType === 'Iniciante'
+                    }
+                };
+                localStorage.setItem(`marketPulse_profile_${newUser.id}`, JSON.stringify(initialProfile));
+                localStorage.setItem(`marketPulse_watchlist_${newUser.id}`, JSON.stringify([]));
+                localStorage.setItem(`marketPulse_notifications_${newUser.id}`, JSON.stringify([]));
+
+                return newUser;
+            },
+
+            updateUserLastLogin(userId) {
+                const users = this.getUsers();
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    user.lastLogin = Date.now();
+                    this.saveUsers(users);
+                }
+            },
+
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+
+            setCurrentUser(user) {
+                const session = {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    userType: user.userType,
+                    sessionStart: Date.now()
+                };
+                localStorage.setItem('marketPulse_currentUser', JSON.stringify(session));
+                this.updateUserLastLogin(user.id);
+            },
+
+            clearCurrentUser() {
+                localStorage.removeItem('marketPulse_currentUser');
+            },
+
+            isEmailValid(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            },
+
+            isPhoneValid(phone) {
+                const cleaned = phone.replace(/\D/g, '');
+                return cleaned.length >= 10 && cleaned.length <= 11;
+            }
+        };
+
+        // ========================================
+        // UI FUNCTIONS
+        // ========================================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function showSignup() {
+            document.getElementById('signupOverlay').classList.remove('hidden');
+            document.getElementById('signupCard').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('signupCard').scrollTop = 0;
+        }
+
+        function hideSignup() {
+            document.getElementById('signupOverlay').classList.add('hidden');
+            document.getElementById('signupCard').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            clearSignupForm();
+        }
+
+        function showTerms() {
+            document.getElementById('termsOverlay').classList.remove('hidden');
+            document.getElementById('termsCard').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('termsCard').scrollTop = 0;
+        }
+
+        function hideTerms() {
+            document.getElementById('termsOverlay').classList.add('hidden');
+            document.getElementById('termsCard').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showPrivacy() {
+            document.getElementById('privacyOverlay').classList.remove('hidden');
+            document.getElementById('privacyCard').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('privacyCard').scrollTop = 0;
+        }
+
+        function hidePrivacy() {
+            document.getElementById('privacyOverlay').classList.add('hidden');
+            document.getElementById('privacyCard').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function selectUserType(element) {
+            document.querySelectorAll('.user-type-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function showAlert(message) {
+            alert(message);
+        }
+
+        function clearLoginErrors() {
+            document.querySelectorAll('#loginForm .error-message').forEach(el => {
+                el.classList.remove('show');
+            });
+            document.querySelectorAll('#loginForm .form-control').forEach(el => {
+                el.classList.remove('error');
+            });
+        }
+
+        function clearSignupErrors() {
+            document.querySelectorAll('#signupForm .error-message').forEach(el => {
+                el.classList.remove('show');
+            });
+            document.querySelectorAll('#signupForm .form-control').forEach(el => {
+                el.classList.remove('error');
+            });
+        }
+
+        function clearSignupForm() {
+            document.getElementById('signupForm').reset();
+            document.querySelectorAll('.user-type-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelector('.user-type-option[data-type="Investidor"]').classList.add('selected');
+            clearSignupErrors();
+        }
+
+        function showError(inputId, errorId) {
+            document.getElementById(inputId).classList.add('error');
+            document.getElementById(errorId).classList.add('show');
+        }
+
+        // ========================================
+        // LOGIN FORM
+        // ========================================
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearLoginErrors();
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!DB.isEmailValid(email)) {
+                showError('loginEmail', 'loginEmailError');
+                return;
+            }
+
+            const user = DB.findUserByEmail(email);
+            
+            if (!user) {
+                showError('loginEmail', 'loginEmailError');
+                document.getElementById('loginEmailError').textContent = 'Usuário não encontrado';
+                return;
+            }
+
+            if (user.password !== password) {
+                showError('loginPassword', 'loginPasswordError');
+                return;
+            }
+
+            const btn = this.querySelector('.btn-primary');
+            btn.innerHTML = 'Entrando...<span class="spinner"></span>';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                DB.setCurrentUser(user);
+                console.log('✅ Login realizado:', user.email);
+                console.log('🆔 User ID:', user.id);
+                console.log('👤 User Type:', user.userType);
+                window.location.href = 'tela1-dashboard.html';
+            }, 1000);
+        });
+
+        // ========================================
+        // SIGNUP FORM
+        // ========================================
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearSignupErrors();
+
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const phone = document.getElementById('signupPhone').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const userType = document.querySelector('.user-type-option.selected').dataset.type;
+            const termsAccepted = document.getElementById('terms').checked;
+
+            let hasError = false;
+
+            if (name.length < 3) {
+                showError('signupName', 'signupNameError');
+                hasError = true;
+            }
+
+            if (!DB.isEmailValid(email)) {
+                showError('signupEmail', 'signupEmailError');
+                document.getElementById('signupEmailError').textContent = 'Email inválido';
+                hasError = true;
+            } else {
+                if (DB.findUserByEmail(email)) {
+                    showError('signupEmail', 'signupEmailError');
+                    document.getElementById('signupEmailError').textContent = 'Email já cadastrado';
+                    hasError = true;
+                }
+            }
+
+            if (!DB.isPhoneValid(phone)) {
+                showError('signupPhone', 'signupPhoneError');
+                hasError = true;
+            }
+
+            if (password.length < 8) {
+                showError('signupPassword', 'signupPasswordError');
+                hasError = true;
+            }
+
+            if (password !== confirmPassword) {
+                showError('confirmPassword', 'confirmPasswordError');
+                hasError = true;
+            }
+
+            if (!termsAccepted) {
+                alert('⚠️ Você deve aceitar os Termos de Uso e Política de Privacidade');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            const btn = this.querySelector('.btn-success');
+            btn.innerHTML = 'Criando conta...<span class="spinner"></span>';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                const avatarMap = {
+                    'Investidor': '👨‍💼',
+                    'Analista': '📊',
+                    'Iniciante': '🎓'
+                };
+
+                const newUser = DB.createUser({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    password: password,
+                    cpf: '',
+                    birthdate: '',
+                    userType: userType,
+                    avatar: avatarMap[userType]
+                });
+
+                console.log('✅ Conta criada:', newUser.email);
+                console.log('🆔 User ID:', newUser.id);
+                console.log('👤 Tipo:', newUser.userType);
+
+                DB.setCurrentUser(newUser);
+                alert('✅ Conta criada com sucesso!\n\nBem-vindo ao Market Pulse!');
+                window.location.href = 'tela1-dashboard.html';
+            }, 1500);
+        });
+
+        // ========================================
+        // INIT
+        // ========================================
+        DB.init();
+
+        window.addEventListener('load', function() {
+            const currentUser = DB.getCurrentUser();
+            if (currentUser) {
+                console.log('👤 Usuário já logado:', currentUser.email);
+            }
+        });
+
+        console.log('📊 Market Pulse - Login v3.0');
+        console.log('✅ Sistema inicializado');
+        console.log('');
+        console.log('🧪 CREDENCIAIS DE TESTE:');
+        console.log('👨‍💼 Investidor: carlos@email.com / carlos123');
+        console.log('🎓 Iniciante: joaquim@email.com / joaquim123');
+        console.log('📊 Analista: beatriz@email.com / beatriz123');
+        console.log('');
+        console.log('🆕 NOVIDADES v3.0:');
+        console.log('✅ Tipo "Iniciante" disponível no cadastro');
+        console.log('✅ Termos de Uso clicável com pop-up completo');
+        console.log('✅ Política de Privacidade clicável com pop-up completo');
+        console.log('✅ Links funcionais no login e cadastro');
+        console.log('✅ Integração com banco de dados v3.0');
+
+        window.DB = DB;
+    </script>
+</body>
+</html>
