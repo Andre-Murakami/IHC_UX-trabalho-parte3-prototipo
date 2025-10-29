@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Pulse - Painel Administrativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 12px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 9pt; /* adiciona 10pt de margem à esquerda e à direita */
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-seed {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .btn-operator {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive { color: #27ae60; }
+        .stat-change.negative { color: #e74c3c; }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: #e8f4f8;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .user-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+
+        .user-item:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .user-meta {
+            font-size: 11px;
+            color: #999;
+            display: flex;
+            gap: 15px;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .badge-active {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .badge-blocked {
+            background: #ffebee;
+            color: #e74c3c;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-block {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-unblock {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 12px;
+            border-left: 4px solid #3498db;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: #333;
+        }
+
+        .activity-user {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .system-status {
+            display: grid;
+            gap: 10px;
+        }
+
+        .status-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-label {
+            font-size: 13px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-green {
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        .dot-red {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .filter-tab:hover {
+            border-color: #3498db;
+        }
+
+        .log-box {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        .log-box .success { color: #2ecc71; }
+        .log-box .warning { color: #f39c12; }
+        .log-box .error { color: #e74c3c; }
+
+        .info-box {
+            background: #fff8e8;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="header-title">Painel Administrativo</div>
+                <div class="header-title">  Market Pulse</div>
+                <div class="header-subtitle"> 🔐  Acesso completo ao sistema</div>
+            </div>
+            <div class="admin-badge">
+                🛡️ ADMINISTRADOR
+            </div>
+            <div class="header-actions">
+                <button class="nav-btn btn-seed" onclick="goToSeed()">🌱 Seed Database</button>
+                <button class="nav-btn btn-operator" onclick="goToOperator()">👨‍💼 Painel Operador</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total de Usuários</div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-change positive" id="userChange">+0 esta semana</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Usuários Ativos</div>
+                <div class="stat-value" id="activeUsers">0</div>
+                <div class="stat-change positive">✓ Online agora</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Usuários Bloqueados</div>
+                <div class="stat-value" id="blockedUsers">0</div>
+                <div class="stat-change negative">⚠️ Requer atenção</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Alertas Cadastrados</div>
+                <div class="stat-value" id="totalAlerts">0</div>
+                <div class="stat-change positive">📊 Sistema ativo</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- User Management -->
+            <div class="panel-card">
+                <div class="panel-title">
+                    <div class="panel-icon">👥</div>
+                    Gerenciamento de Usuários
+                </div>
+
+                <div class="filter-tabs">
+                    <div class="filter-tab active" onclick="filterUsers('all')">Todos</div>
+                    <div class="filter-tab" onclick="filterUsers('active')">Ativos</div>
+                    <div class="filter-tab" onclick="filterUsers('blocked')">Bloqueados</div>
+                    <div class="filter-tab" onclick="filterUsers('Investidor')">Investidores</div>
+                    <div class="filter-tab" onclick="filterUsers('Analista')">Analistas</div>
+                    <div class="filter-tab" onclick="filterUsers('Iniciante')">Iniciantes</div>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" class="search-input" id="userSearch" 
+                           placeholder="🔍 Buscar por nome, email ou CPF..." 
+                           oninput="searchUsers()">
+                </div>
+
+                <div class="user-list" id="userList"></div>
+            </div>
+
+            <!-- System Status & Actions -->
+            <div>
+                <!-- System Status -->
+                <div class="panel-card" style="margin-bottom: 20px;">
+                    <div class="panel-title">
+                        <div class="panel-icon">⚡</div>
+                        Status do Sistema
+                    </div>
+
+                    <div class="system-status">
+                        <div class="status-item">
+                            <div class="status-label">Banco de Dados</div>
+                            <div class="status-indicator">
+                                <div class="indicator-dot dot-green"></div>
+                                <span style="color: #27ae60;">Operacional</span>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Sistema de Alertas</div>
+                            <div class="status-indicator">
+                                <div class="indicator-dot dot-green"></div>
+                                <span style="color: #27ae60;">Ativo</span>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Notificações</div>
+                            <div class="status-indicator">
+                                <div class="indicator-dot dot-green"></div>
+                                <span style="color: #27ae60;">Online</span>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Armazenamento</div>
+                            <div class="status-indicator">
+                                <span id="storageUsage" style="color: #3498db;">0 KB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="exportData()">
+                            💾 Exportar Dados
+                        </button>
+                        <button class="action-btn btn-danger" onclick="clearAllData()">
+                            🗑️ Limpar Sistema
+                        </button>
+                        <button class="action-btn btn-success" onclick="createBackup()">
+                            📦 Criar Backup
+                        </button>
+                        <button class="action-btn btn-warning" onclick="viewLogs()">
+                            📋 Ver Logs
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <div class="panel-icon">📜</div>
+                        Atividades Recentes
+                    </div>
+
+                    <div class="activity-list" id="activityLog"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div class="modal" id="userDetailModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalUserName">Detalhes do Usuário</div>
+            <div class="modal-body" id="modalUserDetails"></div>
+            <div class="modal-actions">
+                <button class="btn btn-view" onclick="closeUserModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs Modal -->
+    <div class="modal" id="logsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-title">📋 Logs do Sistema</div>
+            <div class="modal-body">
+                <div class="log-box" id="systemLogs"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-view" onclick="closeLogsModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // DATABASE
+        // ========================================
+        const DB = {
+            getUsers() {
+                return JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+            },
+            saveUsers(users) {
+                localStorage.setItem('marketPulse_users', JSON.stringify(users));
+                loadStats();
+                renderUsers();
+                addActivityLog('info', 'Usuários atualizados no sistema');
+            },
+            getAlerts() {
+                return JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+            },
+            getActivityLogs() {
+                return JSON.parse(localStorage.getItem('marketPulse_admin_logs') || '[]');
+            },
+            addActivityLog(type, message, user = 'Sistema') {
+                const logs = this.getActivityLogs();
+                logs.unshift({
+                    timestamp: Date.now(),
+                    type: type,
+                    message: message,
+                    user: user
+                });
+                if (logs.length > 100) logs.splice(100);
+                localStorage.setItem('marketPulse_admin_logs', JSON.stringify(logs));
+            },
+            calculateStorageUsage() {
+                let total = 0;
+                for (let key in localStorage) {
+                    if (key.startsWith('marketPulse_')) {
+                        total += localStorage[key].length;
+                    }
+                }
+                return (total / 1024).toFixed(2);
+            }
+        };
+
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        // ========================================
+        // STATS
+        // ========================================
+        function loadStats() {
+            const users = DB.getUsers();
+            const alerts = DB.getAlerts();
+            
+            const totalUsers = users.length;
+            const activeUsers = users.filter(u => !u.blocked).length;
+            const blockedUsers = users.filter(u => u.blocked).length;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            document.getElementById('blockedUsers').textContent = blockedUsers;
+            document.getElementById('totalAlerts').textContent = alerts.length;
+            document.getElementById('storageUsage').textContent = DB.calculateStorageUsage() + ' KB';
+        }
+
+        // ========================================
+        // USER MANAGEMENT
+        // ========================================
+        function renderUsers() {
+            const users = DB.getUsers();
+            const container = document.getElementById('userList');
+
+            let filtered = users;
+
+            // Apply filter
+            if (currentFilter === 'active') {
+                filtered = users.filter(u => !u.blocked);
+            } else if (currentFilter === 'blocked') {
+                filtered = users.filter(u => u.blocked);
+            } else if (['Investidor', 'Analista', 'Iniciante'].includes(currentFilter)) {
+                filtered = users.filter(u => u.userType === currentFilter);
+            }
+
+            // Apply search
+            if (searchTerm) {
+                filtered = filtered.filter(u => 
+                    u.name.toLowerCase().includes(searchTerm) ||
+                    u.email.toLowerCase().includes(searchTerm) ||
+                    u.cpf.includes(searchTerm)
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <div>Nenhum usuário encontrado</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(user => {
+                const isBlocked = user.blocked || false;
+                const badgeClass = isBlocked ? 'badge-blocked' : 'badge-active';
+                const badgeText = isBlocked ? '🚫 Bloqueado' : '✓ Ativo';
+                
+                return `
+                    <div class="user-item">
+                        <div class="user-header">
+                            <div>
+                                <div class="user-name">${user.avatar} ${user.name}</div>
+                                <div class="user-email">${user.email}</div>
+                            </div>
+                            <span class="user-badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                        <div class="user-meta">
+                            <span>📱 ${user.phone}</span>
+                            <span>🎯 ${user.userType}</span>
+                            <span>🆔 ${user.cpf}</span>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-view" onclick="viewUserDetails(${user.id})">👁️ Ver Detalhes</button>
+                            ${isBlocked ? 
+                                `<button class="btn btn-unblock" onclick="toggleUserBlock(${user.id})">✓ Desbloquear</button>` :
+                                `<button class="btn btn-block" onclick="toggleUserBlock(${user.id})">🚫 Bloquear</button>`
+                            }
+                            <button class="btn btn-delete" onclick="deleteUser(${user.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterUsers(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderUsers();
+        }
+
+        function searchUsers() {
+            searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            renderUsers();
+        }
+
+        function toggleUserBlock(userId) {
+            const users = DB.getUsers();
+            const user = users.find(u => u.id === userId);
+            
+            if (!user) return;
+
+            const action = user.blocked ? 'desbloquear' : 'bloquear';
+            
+            if (confirm(`Confirma ${action} o usuário ${user.name}?`)) {
+                user.blocked = !user.blocked;
+                DB.saveUsers(users);
+                DB.addActivityLog(
+                    user.blocked ? 'warning' : 'success',
+                    `Usuário ${user.name} foi ${user.blocked ? 'bloqueado' : 'desbloqueado'}`,
+                    'Administrador'
+                );
+                loadActivityLog();
+            }
+        }
+
+        function deleteUser(userId) {
+            const users = DB.getUsers();
+            const user = users.find(u => u.id === userId);
+            
+            if (!user) return;
+
+            if (confirm(`⚠️ ATENÇÃO: Excluir o usuário ${user.name}?\n\nEsta ação NÃO PODE ser desfeita!\n\nTodos os alertas e notificações deste usuário serão perdidos.`)) {
+                const newUsers = users.filter(u => u.id !== userId);
+                DB.saveUsers(newUsers);
+                
+                // Remove alerts
+                const alerts = DB.getAlerts();
+                const newAlerts = alerts.filter(a => a.userId !== userId);
+                localStorage.setItem('marketPulse_alerts', JSON.stringify(newAlerts));
+                
+                // Remove notifications
+                localStorage.removeItem(`marketPulse_notifications_${userId}`);
+                localStorage.removeItem(`marketPulse_profile_${userId}`);
+                
+                DB.addActivityLog('error', `Usuário ${user.name} foi EXCLUÍDO do sistema`, 'Administrador');
+                loadActivityLog();
+                alert('✅ Usuário excluído com sucesso!');
+            }
+        }
+
+        function viewUserDetails(userId) {
+            const users = DB.getUsers();
+            const user = users.find(u => u.id === userId);
+            
+            if (!user) return;
+
+            const alerts = DB.getAlerts().filter(a => a.userId === userId);
+            const notifications = JSON.parse(localStorage.getItem(`marketPulse_notifications_${userId}`) || '[]');
+            const profile = JSON.parse(localStorage.getItem(`marketPulse_profile_${userId}`) || '{}');
+
+            document.getElementById('modalUserName').textContent = `${user.avatar} ${user.name}`;
+            document.getElementById('modalUserDetails').innerHTML = `
+                <div class="form-group">
+                    <div class="form-label">Informações Pessoais</div>
+                    <div style="font-size: 13px; line-height: 1.8;">
+                        <strong>Email:</strong> ${user.email}<br>
+                        <strong>Telefone:</strong> ${user.phone}<br>
+                        <strong>CPF:</strong> ${user.cpf}<br>
+                        <strong>Data de Nascimento:</strong> ${user.birthdate}<br>
+                        <strong>Tipo de Usuário:</strong> ${user.userType}<br>
+                        <strong>Status:</strong> ${user.blocked ? '🚫 Bloqueado' : '✓ Ativo'}<br>
+                        <strong>Cadastrado em:</strong> ${new Date(user.createdAt).toLocaleString('pt-BR')}<br>
+                        <strong>Último Login:</strong> ${new Date(user.lastLogin).toLocaleString('pt-BR')}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Estatísticas</div>
+                    <div style="font-size: 13px; line-height: 1.8;">
+                        <strong>Alertas Cadastrados:</strong> ${alerts.length}<br>
+                        <strong>Notificações Recebidas:</strong> ${notifications.length}<br>
+                        <strong>Alertas Ativos:</strong> ${alerts.filter(a => a.active).length}<br>
+                        <strong>Tooltips Habilitados:</strong> ${profile.preferences?.showTooltips ? 'Sim' : 'Não'}
+                    </div>
+                </div>
+            `;
+            document.getElementById('userDetailModal').classList.add('show');
+        }
+
+        function closeUserModal() {
+            document.getElementById('userDetailModal').classList.remove('show');
+        }
+
+        // ========================================
+        // ACTIVITY LOG
+        // ========================================
+        function loadActivityLog() {
+            const logs = DB.getActivityLogs();
+            const container = document.getElementById('activityLog');
+
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <div>Nenhuma atividade registrada</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = logs.slice(0, 10).map(log => {
+                const time = new Date(log.timestamp).toLocaleString('pt-BR');
+                const icon = log.type === 'success' ? '✅' : log.type === 'warning' ? '⚠️' : log.type === 'error' ? '❌' : 'ℹ️';
+                
+                return `
+                    <div class="activity-item">
+                        <div class="activity-time">${time}</div>
+                        <div class="activity-text">${icon} ${log.message}</div>
+                        <div class="activity-user">👤 ${log.user}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addActivityLog(type, message, user = 'Sistema') {
+            DB.addActivityLog(type, message, user);
+            loadActivityLog();
+        }
+
+        // ========================================
+        // SYSTEM ACTIONS
+        // ========================================
+        function exportData() {
+            const data = {
+                users: DB.getUsers(),
+                alerts: DB.getAlerts(),
+                news: JSON.parse(localStorage.getItem('marketPulse_news') || '[]'),
+                reports: JSON.parse(localStorage.getItem('marketPulse_analysis_reports') || '{}'),
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `marketpulse-backup-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            addActivityLog('success', 'Dados exportados com sucesso', 'Administrador');
+            alert('✅ Dados exportados com sucesso!');
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ ATENÇÃO: Limpar TODOS os dados do sistema?\n\nEsta ação NÃO PODE ser desfeita!\n\nTodos os usuários, alertas, notificações e históricos serão perdidos permanentemente.')) {
+                return;
+            }
+
+            if (!confirm('⚠️ CONFIRMAÇÃO FINAL: Você tem certeza ABSOLUTA?\n\nDigite OK no próximo prompt para confirmar.')) {
+                return;
+            }
+
+            const confirmation = prompt('Digite "LIMPAR" (em maiúsculas) para confirmar:');
+            if (confirmation !== 'LIMPAR') {
+                alert('❌ Operação cancelada.');
+                return;
+            }
+
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('marketPulse_'));
+            keys.forEach(key => localStorage.removeItem(key));
+
+            addActivityLog('error', 'Sistema completamente limpo - TODOS OS DADOS FORAM APAGADOS', 'Administrador');
+            
+            alert('✅ Sistema limpo com sucesso!\n\nA página será recarregada.');
+            setTimeout(() => location.reload(), 1000);
+        }
+
+        function createBackup() {
+            const backup = {
+                timestamp: Date.now(),
+                data: {}
+            };
+
+            for (let key in localStorage) {
+                if (key.startsWith('marketPulse_')) {
+                    backup.data[key] = localStorage[key];
+                }
+            }
+
+            localStorage.setItem('marketPulse_backup_latest', JSON.stringify(backup));
+            
+            addActivityLog('success', `Backup criado com sucesso (${Object.keys(backup.data).length} chaves)`, 'Administrador');
+            alert(`✅ Backup criado com sucesso!\n\nChaves salvas: ${Object.keys(backup.data).length}\nData: ${new Date().toLocaleString('pt-BR')}`);
+        }
+
+        function viewLogs() {
+            const logs = DB.getActivityLogs();
+            const container = document.getElementById('systemLogs');
+
+            container.innerHTML = logs.map(log => {
+                const time = new Date(log.timestamp).toLocaleString('pt-BR');
+                const className = log.type === 'success' ? 'success' : log.type === 'warning' ? 'warning' : log.type === 'error' ? 'error' : '';
+                
+                return `<div class="${className}">[${time}] ${log.message} (${log.user})</div>`;
+            }).join('');
+
+            document.getElementById('logsModal').classList.add('show');
+        }
+
+        function closeLogsModal() {
+            document.getElementById('logsModal').classList.remove('show');
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function goToSeed() {
+            window.location.href = 'seed-database.html';
+        }
+
+        function goToOperator() {
+            window.location.href = 'painel-operador.html';
+        }
+
+        // ========================================
+        // INIT
+        // ========================================
+        window.addEventListener('load', function() {
+            console.log('🔐 Market Pulse - Painel Administrativo v1.0');
+            console.log('✅ Sistema carregado');
+            console.log('');
+            console.log('📊 FUNCIONALIDADES:');
+            console.log('✅ Gerenciamento completo de usuários');
+            console.log('✅ Bloquear/Desbloquear usuários');
+            console.log('✅ Excluir usuários e dados');
+            console.log('✅ Filtros e busca avançada');
+            console.log('✅ Visualização de detalhes');
+            console.log('✅ Log de atividades');
+            console.log('✅ Exportação de dados');
+            console.log('✅ Sistema de backup');
+            console.log('✅ Estatísticas em tempo real');
+            console.log('');
+            console.log('🔧 NAVEGAÇÃO:');
+            console.log('- Seed Database: Gerenciar dados de teste');
+            console.log('- Painel Operador: Enviar alertas e notícias');
+            console.log('');
+
+            loadStats();
+            renderUsers();
+            loadActivityLog();
+
+            addActivityLog('info', 'Painel administrativo acessado', 'Administrador');
+        });
+
+        // Expose para debug
+        window.DB = DB;
+        window.addActivityLog = addActivityLog;
+    </script>
+</body>
+</html>

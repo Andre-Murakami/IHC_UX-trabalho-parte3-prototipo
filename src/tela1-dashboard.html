@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 101;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+	.header-logo {
+	    width: 50px;          /* Ajustado para 30px (50px - 2 * 10px de padding) */
+	    height: 50px;         /* Ajustado para 30px (50px - 2 * 10px de padding) */
+	    object-fit: contain;  /* Mantido para ajuste da imagem */
+	    border-radius: 30%;   /* Formato circular */
+	    background: white;    /* Fundo branco */
+	    padding: 2px;       /* Padding de 10px ao redor do logo */
+	    box-sizing: content-box; /* Garante que o padding não afete o tamanho do círculo */
+	}
+
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #3498db;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 80px;
+            margin-top: 100px;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .welcome-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e8f4f8;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #3498db;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .academy-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .academy-button:active {
+            transform: scale(0.98);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section-title-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .section-title-btn:active {
+            opacity: 0.7;
+        }
+
+        .settings-icon {
+            font-size: 14px;
+            color: #999;
+            margin-left: 3px;
+        }
+
+        .see-all {
+            font-size: 13px;
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+
+        .news-card:active {
+            transform: scale(0.98);
+        }
+
+        .news-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .badge-positive { background: #27ae60; }
+        .badge-negative { background: #e74c3c; }
+        .badge-neutral { background: #95a5a6; }
+
+        .news-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .alert-item {
+            background: white;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .alert-item:active {
+            transform: scale(0.98);
+            background: #f8f9fa;
+        }
+
+        .alert-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .icon-price { background: #e8f4f8; color: #3498db; }
+        .icon-news { background: #fff8e8; color: #f39c12; }
+        .icon-price-positive { background: #e8f5e9; color: #27ae60; }
+        .icon-price-negative { background: #ffebee; color: #e74c3c; }
+
+        .alert-info {
+            flex: 1;
+        }
+
+        .alert-asset {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .alert-condition {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notification-card:active {
+            transform: scale(0.98);
+            background: #f8f9fa;
+        }
+
+        .notification-card.read {
+            opacity: 0.6;
+        }
+
+        .notif-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background: #e8f4f8; }
+        .icon-yellow { background: #fff8e8; }
+
+        .notif-content {
+            flex: 1;
+        }
+
+        .notif-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .notif-message {
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .positive { color: #27ae60; }
+        .negative { color: #e74c3c; }
+        .neutral { color: #666; }
+
+        .notif-desc {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .notif-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .notif-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .notif-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .read-badge {
+            background: #e8f5e9;
+            color: #27ae60;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .notif-arrow {
+            font-size: 18px;
+            color: #ccc;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .filter-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 360px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 20px;
+            color: white;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .filter-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .filter-content {
+            padding: 20px;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .time-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .time-option {
+            padding: 12px 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .time-option:active {
+            transform: scale(0.95);
+        }
+
+        .time-option.selected {
+            background: #e8f4f8;
+            border-color: #3498db;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .time-value {
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .time-label {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .filter-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 14px;
+            border-radius: 22px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .tooltip-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 360px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tooltip-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .tooltip-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .tooltip-close:active {
+            background: #e0e0e0;
+        }
+
+        .tooltip-body {
+            padding: 20px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .tooltip-example {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+
+        .tooltip-example strong {
+            color: #3498db;
+        }
+
+        .help-icon {
+            width: 18px;
+            height: 18px;
+            background: #e8f4f8;
+            color: #3498db;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .help-icon.show {
+            display: inline-flex;
+        }
+
+        .help-icon:active {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .nav-item.active {
+            background: #e8f4f8;
+            border-radius: 8px;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #3498db;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .menu-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .menu-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 40px 20px 20px;
+            color: white;
+        }
+
+        .menu-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .menu-info h3 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .menu-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .menu-items {
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:active {
+            background: #f8f9fa;
+        }
+
+        .menu-item.active {
+            background: #e8f4f8;
+            border-left-color: #3498db;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-text {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .status-bar {
+                padding-top: calc(8px + env(safe-area-inset-top));
+            }
+            
+            .header {
+                top: calc(44px + env(safe-area-inset-top));
+            }
+            
+            .main-content {
+                margin-top: calc(100px + env(safe-area-inset-top));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="header-title">
+    <img src="logo.png" alt="Market Pulse Logo" class="header-logo">
+    MarketPulse
+</div>
+        <div class="profile-icon" onclick="goToProfile()" id="profileAvatar">👤</div>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <div class="welcome-text">
+                Bem-vindo de volta,
+                <span class="help-icon" onclick="showTooltip('bemvindo')" id="helpBemvindo">ℹ️</span>
+            </div>
+            <div class="welcome-name" id="userName">...</div>
+            <span class="user-badge" id="userBadge">💼 Investidor</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="activeAlertsCount">0</div>
+                <div class="stat-label">
+                    Alertas Ativos
+                    <span class="help-icon" onclick="showTooltip('alertas-ativos')" id="helpAlertasAtivos">ℹ️</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="unreadCount">0</div>
+                <div class="stat-label">
+                    Não Lidas
+                    <span class="help-icon" onclick="showTooltip('nao-lidas')" id="helpNaoLidas">ℹ️</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="academy-button" id="academyBtn" style="display: none;" onclick="goToAcademy()">
+            🎓 Aprender sobre Investimentos
+        </button>
+
+        <div class="section-header">
+            <div class="section-title">
+                📰 Última Notícia
+                <span class="help-icon" onclick="showTooltip('ultima-noticia')" id="helpUltimaNoticia">ℹ️</span>
+            </div>
+            <a class="see-all" onclick="goToNews()">Ver todas</a>
+        </div>
+        <div id="newsContainer"></div>
+
+        <div class="section-header">
+            <div class="section-title">
+                📋 Meus Alertas Configurados
+                <span class="help-icon" onclick="showTooltip('alertas-configurados')" id="helpAlertasConfig">ℹ️</span>
+            </div>
+            <a class="see-all" onclick="goToAlerts()">Gerenciar</a>
+        </div>
+        <div id="alertsContainer"></div>
+
+        <div class="section-header">
+            <button class="section-title-btn" onclick="openNotificationFilter()">
+                🔔 Últimas Notificações
+                <span class="settings-icon">⚙️</span>
+                <span class="help-icon" onclick="event.stopPropagation(); showTooltip('notificacoes')" id="helpNotificacoes">ℹ️</span>
+            </button>
+            <a class="see-all" onclick="goToAlerts()">Ver todos</a>
+        </div>
+        <div id="notificationsContainer"></div>
+    </div>
+
+    <div class="modal-overlay" id="notificationFilterModal" onclick="closeNotificationFilter()">
+        <div class="filter-modal" onclick="event.stopPropagation()">
+            <div class="filter-header">
+                <div class="filter-title">⚙️ Filtrar Notificações</div>
+                <div class="filter-subtitle">Escolha por quanto tempo manter notificações lidas</div>
+            </div>
+            
+            <div class="filter-content">
+                <div class="filter-section">
+                    <div class="filter-label">Manter notificações lidas por:</div>
+                    <div class="time-options">
+                        <div class="time-option" data-hours="1" onclick="selectTimeFilter(1)">
+                            <span class="time-value">1h</span>
+                            <span class="time-label">hora</span>
+                        </div>
+                        <div class="time-option" data-hours="2" onclick="selectTimeFilter(2)">
+                            <span class="time-value">2h</span>
+                            <span class="time-label">horas</span>
+                        </div>
+                        <div class="time-option" data-hours="3" onclick="selectTimeFilter(3)">
+                            <span class="time-value">3h</span>
+                            <span class="time-label">horas</span>
+                        </div>
+                        <div class="time-option" data-hours="6" onclick="selectTimeFilter(6)">
+                            <span class="time-value">6h</span>
+                            <span class="time-label">horas</span>
+                        </div>
+                        <div class="time-option" data-hours="12" onclick="selectTimeFilter(12)">
+                            <span class="time-value">12h</span>
+                            <span class="time-label">horas</span>
+                        </div>
+                        <div class="time-option selected" data-hours="24" onclick="selectTimeFilter(24)">
+                            <span class="time-value">24h</span>
+                            <span class="time-label">horas</span>
+                        </div>
+                        <div class="time-option" data-hours="48" onclick="selectTimeFilter(48)">
+                            <span class="time-value">2</span>
+                            <span class="time-label">dias</span>
+                        </div>
+                        <div class="time-option" data-hours="72" onclick="selectTimeFilter(72)">
+                            <span class="time-value">3</span>
+                            <span class="time-label">dias</span>
+                        </div>
+                        <div class="time-option" data-hours="168" onclick="selectTimeFilter(168)">
+                            <span class="time-value">7</span>
+                            <span class="time-label">dias</span>
+                        </div>
+                        <div class="time-option" data-hours="336" onclick="selectTimeFilter(336)">
+                            <span class="time-value">14</span>
+                            <span class="time-label">dias</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="btn btn-primary" onclick="applyNotificationFilter()">
+                    ✓ Aplicar Filtro
+                </button>
+                <button class="btn btn-danger" onclick="deleteAllReadNotifications()">
+                    🗑️ Deletar Todas Lidas
+                </button>
+                <button class="btn btn-secondary" onclick="closeNotificationFilter()">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip Modal -->
+    <div class="modal-overlay" id="tooltipModal" onclick="closeTooltip()">
+        <div class="tooltip-modal" onclick="event.stopPropagation()">
+            <div class="tooltip-header">
+                <div class="tooltip-title" id="tooltipTitle">Ajuda</div>
+                <div class="tooltip-close" onclick="closeTooltip()">×</div>
+            </div>
+            <div class="tooltip-body" id="tooltipBody">
+                Informação...
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item" onclick="goToAlerts()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-label">Alertas</div>
+        </div>
+        <div class="nav-item" onclick="goToNews()">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Notícias</div>
+        </div>
+        <div class="nav-item" onclick="goToReport()">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Relatórios</div>
+        </div>
+        <div class="nav-item" onclick="goToProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-profile">
+                <div class="menu-avatar" id="menuAvatar">👤</div>
+                <div class="menu-info">
+                    <h3 id="menuName">Usuário</h3>
+                    <p id="menuEmail">email@exemplo.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="menu-items">
+            <div class="menu-item active" onclick="goToHome()">
+                <div class="menu-icon">🏠</div>
+                <div class="menu-text">Dashboard</div>
+            </div>
+            <div class="menu-item" onclick="goToAlerts()">
+                <div class="menu-icon">🔔</div>
+                <div class="menu-text">Meus Alertas</div>
+            </div>
+            <div class="menu-item" onclick="goToNews()">
+                <div class="menu-icon">📰</div>
+                <div class="menu-text">Notícias</div>
+            </div>
+            <div class="menu-item" onclick="goToReport()">
+                <div class="menu-icon">📊</div>
+                <div class="menu-text">Relatórios</div>
+            </div>
+            <div class="menu-item" id="menuAcademyItem" style="display: none;" onclick="goToAcademy()">
+                <div class="menu-icon">🎓</div>
+                <div class="menu-text">Academy</div>
+            </div>
+            <div class="menu-item" onclick="goToProfile()">
+                <div class="menu-icon">👤</div>
+                <div class="menu-text">Perfil</div>
+            </div>
+            <div class="menu-item" onclick="logout()">
+                <div class="menu-icon">🚪</div>
+                <div class="menu-text">Sair</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // GLOBALS & TOOLTIP SYSTEM
+        // ========================================
+        let tooltipsEnabled = false;
+        let notificationTimeFilter = 24; // Padrão: 24 horas
+
+        const tooltips = {
+            'bemvindo': {
+                title: '👋 Bem-vindo',
+                text: 'Esta é sua tela principal (Dashboard). Aqui você encontra um resumo de tudo que está acontecendo com seus investimentos.',
+                example: '<strong>Dica:</strong> Visite o Dashboard diariamente para acompanhar suas notificações e alertas!'
+            },
+            'alertas-ativos': {
+                title: '📋 Alertas Ativos',
+                text: 'Mostra quantos alertas você tem configurados e funcionando no momento.',
+                example: '<strong>Exemplo:</strong> Se você tem 5 alertas ativos, receberá notificações quando as condições desses alertas forem atingidas.'
+            },
+            'nao-lidas': {
+                title: '🔔 Notificações Não Lidas',
+                text: 'Número de notificações que você ainda não visualizou. Clique nelas para marcar como lida.',
+                example: '<strong>Importante:</strong> Notificações não lidas aparecem com um badge "NOVO" ao lado.'
+            },
+            'ultima-noticia': {
+                title: '📰 Última Notícia',
+                text: 'Exibe a notícia mais recente dos ativos que você está monitorando. Mantenha-se sempre informado!',
+                example: '<strong>Como funciona:</strong> Cadastre alertas de notícias para ver informações relevantes aqui.'
+            },
+            'alertas-configurados': {
+                title: '📋 Meus Alertas Configurados',
+                text: 'Lista todos os alertas que você criou. Você pode criar alertas de variação de preço ou de notícias importantes.',
+                example: '<strong>Tipos de alerta:</strong><br>🔹 Variação de Preço: Avisa quando o preço sobe ou desce X%<br>🔹 Notícias: Avisa sobre notícias importantes'
+            },
+            'notificacoes': {
+                title: '🔔 Últimas Notificações',
+                text: 'Mostra as notificações mais recentes geradas pelos seus alertas. Clique em uma para ver mais detalhes.<br><br><strong>⚙️ Filtro Inteligente:</strong><br>• Clique no ícone ⚙️ para configurar por quanto tempo notificações lidas ficam visíveis<br>• Notificações não lidas permanecem SEMPRE visíveis até serem lidas<br>• Notificações de notícias deletadas são automaticamente removidas<br>• Use "Deletar Todas Lidas" para limpar o feed rapidamente',
+                example: '<strong>Interação:</strong> Clique em uma notificação de preço para ver o gráfico histórico, ou em uma de notícia para ler o conteúdo completo.'
+            }
+        };
+
+        function showTooltip(key) {
+            if (!tooltipsEnabled) return;
+            
+            const tooltip = tooltips[key];
+            if (!tooltip) return;
+            
+            document.getElementById('tooltipTitle').textContent = tooltip.title;
+            document.getElementById('tooltipBody').innerHTML = 
+                tooltip.text + (tooltip.example ? '<div class="tooltip-example">' + tooltip.example + '</div>' : '');
+            
+            document.getElementById('tooltipModal').classList.add('show');
+        }
+
+        function closeTooltip() {
+            document.getElementById('tooltipModal').classList.remove('show');
+        }
+
+        function enableTooltips() {
+            tooltipsEnabled = true;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.add('show');
+            });
+        }
+
+        function disableTooltips() {
+            tooltipsEnabled = false;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.remove('show');
+            });
+        }
+
+        function checkTooltipSettings() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) return;
+            
+            const profile = JSON.parse(localStorage.getItem(`marketPulse_profile_${currentUser.id}`) || '{}');
+            
+            if (profile.preferences && profile.preferences.showTooltips) {
+                enableTooltips();
+            }
+        }
+
+        // ========================================
+        // DATABASE
+        // ========================================
+        const DB = {
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+            getUserById(userId) {
+                const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                return users.find(u => u.id === userId);
+            },
+            getUserAlerts(userId) {
+                const alerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                return alerts.filter(a => a.userId === userId);
+            },
+            getUserNotifications(userId) {
+                const notifs = localStorage.getItem(`marketPulse_notifications_${userId}`);
+                return notifs ? JSON.parse(notifs) : [];
+            },
+            getNews() {
+                return JSON.parse(localStorage.getItem('marketPulse_news') || '[]');
+            },
+            markAsRead(userId, notifId) {
+                const notifs = this.getUserNotifications(userId);
+                const notif = notifs.find(n => n.id === notifId);
+                if (notif) {
+                    notif.read = true;
+                    notif.readAt = Date.now();
+                    localStorage.setItem(`marketPulse_notifications_${userId}`, JSON.stringify(notifs));
+                }
+            },
+            isNewsDeleted(newsId) {
+                const allNews = this.getNews();
+                return !allNews.find(n => n.id === newsId);
+            }
+        };
+
+        // ========================================
+        // UTILS
+        // ========================================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        function getRelativeTime(timestamp) {
+            const diff = Date.now() - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'Agora';
+            if (minutes < 60) return `Há ${minutes}min`;
+            if (hours < 24) return `Há ${hours}h`;
+            if (days < 7) return `Há ${days}d`;
+            
+            return new Date(timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }
+
+        // ========================================
+        // NOTIFICATION FILTER MODAL
+        // ========================================
+        function openNotificationFilter() {
+            document.getElementById('notificationFilterModal').classList.add('show');
+        }
+
+        function closeNotificationFilter() {
+            document.getElementById('notificationFilterModal').classList.remove('show');
+        }
+
+        function selectTimeFilter(hours) {
+            document.querySelectorAll('.time-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelector(`[data-hours="${hours}"]`).classList.add('selected');
+            notificationTimeFilter = hours;
+        }
+
+        function applyNotificationFilter() {
+            closeNotificationFilter();
+            loadNotifications(DB.getCurrentUser().id);
+        }
+
+        function deleteAllReadNotifications() {
+            if (!confirm('🗑️ Deletar todas as notificações lidas?\n\nEsta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            const currentUser = DB.getCurrentUser();
+            const notifs = DB.getUserNotifications(currentUser.id);
+            
+            const unreadNotifs = notifs.filter(n => !n.read);
+            
+            localStorage.setItem(`marketPulse_notifications_${currentUser.id}`, JSON.stringify(unreadNotifs));
+            
+            closeNotificationFilter();
+            loadNotifications(currentUser.id);
+            
+            alert('✅ Todas as notificações lidas foram deletadas!');
+        }
+
+        // ========================================
+        // LOAD USER DATA
+        // ========================================
+        function loadUserData() {
+            const currentUser = DB.getCurrentUser();
+            
+            if (!currentUser) {
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+
+            const user = DB.getUserById(currentUser.id);
+            if (!user) {
+                alert('Erro ao carregar dados. Faça login novamente.');
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+
+            document.getElementById('userName').textContent = user.name.split(' ')[0];
+            document.getElementById('userBadge').textContent = `${user.avatar} ${user.userType}`;
+            document.getElementById('profileAvatar').textContent = user.avatar;
+            document.getElementById('menuAvatar').textContent = user.avatar;
+            document.getElementById('menuName').textContent = user.name;
+            document.getElementById('menuEmail').textContent = user.email;
+
+            if (user.userType === 'Iniciante') {
+                document.getElementById('academyBtn').style.display = 'flex';
+                document.getElementById('menuAcademyItem').style.display = 'flex';
+            }
+
+            loadStats(currentUser.id);
+            loadLatestNews(currentUser.id);
+            loadUserAlerts(currentUser.id);
+            loadNotifications(currentUser.id);
+        }
+
+        // ========================================
+        // STATS
+        // ========================================
+        function loadStats(userId) {
+            const alerts = DB.getUserAlerts(userId);
+            const activeCount = alerts.filter(a => a.active).length;
+            document.getElementById('activeAlertsCount').textContent = activeCount;
+
+            const notifs = DB.getUserNotifications(userId);
+            const unreadCount = notifs.filter(n => !n.read && !DB.isNewsDeleted(n.newsId)).length;
+            document.getElementById('unreadCount').textContent = unreadCount;
+        }
+
+        // ========================================
+        // LATEST NEWS
+        // ========================================
+        function loadLatestNews(userId) {
+            const container = document.getElementById('newsContainer');
+            const allNews = DB.getNews();
+            const userAlerts = DB.getUserAlerts(userId);
+            
+            const userAssets = [...new Set(userAlerts.map(a => a.asset))];
+            
+            if (userAssets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📰</div>
+                        <div class="empty-text">Configure alertas para ver notícias<br>dos seus ativos</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const relevantNews = allNews.filter(n => userAssets.includes(n.company));
+            
+            if (relevantNews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📰</div>
+                        <div class="empty-text">Nenhuma notícia disponível</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const latest = relevantNews.sort((a, b) => b.timestamp - a.timestamp)[0];
+            
+            const badgeClass = latest.impact === 'positive' ? 'badge-positive' : 
+                              latest.impact === 'negative' ? 'badge-negative' : 'badge-neutral';
+            const impactText = latest.impact === 'positive' ? 'POSITIVA' : 
+                              latest.impact === 'negative' ? 'NEGATIVA' : 'NEUTRA';
+            
+            container.innerHTML = `
+                <div class="news-card" onclick="goToNewsDetail('${latest.company}')">
+                    <span class="news-badge ${badgeClass}">${impactText}</span>
+                    <div class="news-title">${latest.title}</div>
+                    <div class="news-meta">
+                        <span>${latest.source}</span>
+                        <span>${getRelativeTime(latest.timestamp)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ========================================
+        // USER ALERTS
+        // ========================================
+        function loadUserAlerts(userId) {
+            const container = document.getElementById('alertsContainer');
+            const alerts = DB.getUserAlerts(userId).filter(a => a.active);
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">Você não tem alertas ativos<br><a class="see-all" onclick="goToAlerts()">Criar primeiro alerta</a></div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = alerts.map(alert => {
+                const isPrice = alert.type === 'price';
+                
+                let iconClass = '';
+                let icon = '';
+                
+                if (isPrice) {
+                    const variation = alert.variationPercentage || 0;
+                    if (variation >= 0) {
+                        iconClass = 'icon-price-positive';
+                        icon = '▲';
+                    } else {
+                        iconClass = 'icon-price-negative';
+                        icon = '▼';
+                    }
+                } else {
+                    iconClass = 'icon-news';
+                    icon = '📰';
+                }
+                
+                let condition = '';
+                if (isPrice) {
+                    const variation = alert.variationPercentage || 0;
+                    const sign = variation >= 0 ? '+' : '';
+                    condition = `Variação ${sign}${variation.toFixed(1)}%`;
+                } else {
+                    condition = 'Notícias relevantes';
+                }
+                
+                return `
+                    <div class="alert-item" onclick="goToAlerts()">
+                        <div class="alert-icon ${iconClass}">${icon}</div>
+                        <div class="alert-info">
+                            <div class="alert-asset">${alert.asset}</div>
+                            <div class="alert-condition">${condition}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========================================
+        // NOTIFICATIONS v5.0 - SMART FILTERING
+        // ========================================
+        function loadNotifications(userId) {
+            const container = document.getElementById('notificationsContainer');
+            let notifs = DB.getUserNotifications(userId);
+            
+            // FILTRO 1: Remover notificações de notícias deletadas
+            notifs = notifs.filter(notif => {
+                if (notif.alertType === 'news' && notif.newsId) {
+                    return !DB.isNewsDeleted(notif.newsId);
+                }
+                return true;
+            });
+            
+            // FILTRO 2: Aplicar filtro de tempo apenas para notificações LIDAS
+            const now = Date.now();
+            const timeFilterMs = notificationTimeFilter * 60 * 60 * 1000;
+            
+            notifs = notifs.filter(notif => {
+                if (!notif.read) {
+                    return true; // Não lidas sempre aparecem
+                }
+                
+                const readAt = notif.readAt || notif.timestamp;
+                const timeSinceRead = now - readAt;
+                
+                return timeSinceRead <= timeFilterMs;
+            });
+            
+            if (notifs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <div class="empty-text">Nenhuma notificação ainda<br>Configure alertas para receber avisos</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const recent = notifs.sort((a, b) => b.timestamp - a.timestamp).slice(0, 10);
+            
+            container.innerHTML = recent.map(notif => {
+                const isPrice = notif.alertType === 'price';
+                const iconClass = isPrice ? 'icon-blue' : 'icon-yellow';
+                const icon = isPrice ? '📊' : '📰';
+                
+                const valueClass = notif.message.includes('+') ? 'positive' : 
+                                  notif.message.includes('-') ? 'negative' : 'neutral';
+                
+                const isRead = notif.read;
+                
+                return `
+                    <div class="notification-card ${isRead ? 'read' : ''}" onclick="handleNotifClick(${notif.id}, '${notif.alertType}', '${notif.title}')">
+                        <div class="notif-icon ${iconClass}">${icon}</div>
+                        <div class="notif-content">
+                            <div class="notif-title">${notif.title}</div>
+                            <div class="notif-message ${valueClass}">${notif.message}</div>
+                            <div class="notif-desc">${notif.description}</div>
+                        </div>
+                        <div class="notif-meta">
+                            <div class="notif-time">${getRelativeTime(notif.timestamp)}</div>
+                            ${!isRead ? '<div class="notif-badge">NOVO</div>' : '<div class="read-badge">✓ Lida</div>'}
+                            <div class="notif-arrow">›</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========================================
+        // NOTIFICATION CLICK
+        // ========================================
+        function handleNotifClick(notifId, alertType, assetSymbol) {
+            const currentUser = DB.getCurrentUser();
+            
+            DB.markAsRead(currentUser.id, notifId);
+            
+            sessionStorage.setItem('selectedAsset', assetSymbol);
+            
+            if (alertType === 'news') {
+                window.location.href = 'tela3-noticias.html';
+            } else {
+                window.location.href = 'tela5-historico.html';
+            }
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('open');
+            document.getElementById('menuOverlay').classList.toggle('show');
+        }
+
+        function goToHome() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToAlerts() {
+            window.location.href = 'tela2-notificacoes.html';
+        }
+
+        function goToNews() {
+            window.location.href = 'tela3-noticias.html';
+        }
+
+        function goToNewsDetail(assetSymbol) {
+            sessionStorage.setItem('selectedAsset', assetSymbol);
+            window.location.href = 'tela3-noticias.html';
+        }
+
+        function goToReport() {
+            window.location.href = 'tela5-historico.html';
+        }
+
+        function goToProfile() {
+            window.location.href = 'tela7-perfil.html';
+        }
+
+        function goToAcademy() {
+            window.location.href = 'tela8-academy.html';
+        }
+
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('marketPulse_currentUser');
+                window.location.href = 'tela6-login.html';
+            }
+        }
+
+        // ========================================
+        // INIT
+        // ========================================
+        window.addEventListener('load', function() {
+            console.log('🏠 Market Pulse - Dashboard v5.0 REFATORADO');
+            console.log('✅ Carregado com sucesso');
+            console.log('');
+            console.log('🆕 ATUALIZAÇÕES v5.0:');
+            console.log('1. ✅ Notificações de notícias deletadas são automaticamente removidas');
+            console.log('2. ✅ Notificações lidas ficam translúcidas com badge "✓ Lida"');
+            console.log('3. ✅ Filtro de tempo inteligente (1h a 14 dias)');
+            console.log('4. ✅ Notificações não lidas permanecem SEMPRE visíveis');
+            console.log('5. ✅ Botão "Deletar Todas Lidas" para limpar o feed');
+            console.log('6. ✅ Modal de filtro clean e amigável');
+            console.log('7. ✅ Tooltip atualizado com informações do filtro');
+            console.log('');
+            console.log('📋 LÓGICA DE FILTRAGEM:');
+            console.log('• Notificações de notícias deletadas: NÃO aparecem');
+            console.log('• Notificações não lidas: SEMPRE aparecem');
+            console.log('• Notificações lidas: aparecem conforme filtro de tempo');
+            console.log('• Filtro padrão: 24 horas');
+            console.log('');
+            
+            loadUserData();
+            checkTooltipSettings();
+        });
+
+        window.enableTooltips = enableTooltips;
+        window.disableTooltips = disableTooltips;
+    </script>
+</body>
+</html>

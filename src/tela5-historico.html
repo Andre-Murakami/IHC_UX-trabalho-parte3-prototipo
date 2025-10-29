@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Análise Histórica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: sticky;
+            top: 44px;
+            z-index: 99;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+        }
+
+        .header-content {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .asset-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .asset-symbol {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .asset-name-small {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .change-btn {
+            font-size: 11px;
+            color: #3498db;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #3498db;
+            background: white;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .change-btn:active {
+            background-color: #e8f4f8;
+            transform: scale(0.95);
+        }
+
+        .asset-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+
+        .asset-change {
+            font-size: 12px;
+            color: #27ae60;
+        }
+
+        .asset-change.negative {
+            color: #e74c3c;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-icon {
+            width: 18px;
+            height: 18px;
+            background: #e8f4f8;
+            color: #3498db;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .help-icon.show {
+            display: inline-flex;
+        }
+
+        .help-icon:active {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .period-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
+        }
+
+        .period-selector::-webkit-scrollbar {
+            display: none;
+        }
+
+        .period-chip {
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            border: 1px solid #ccc;
+            background: white;
+            color: #666;
+            user-select: none;
+        }
+
+        .period-chip.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .period-chip:active {
+            transform: scale(0.95);
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+            height: 220px;
+            position: relative;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sentiment-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            display: none;
+        }
+
+        .sentiment-card.show {
+            display: block;
+        }
+
+        .sentiment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sentiment-title {
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sentiment-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .accuracy-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .sentiment-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .sentiment-item {
+            background: rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .sentiment-label {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .sentiment-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .sentiment-match {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .match-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .match-text {
+            font-size: 11px;
+            opacity: 0.95;
+        }
+
+        .indicators-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .indicator-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .indicator-label {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .indicator-label .help-icon {
+            width: 14px;
+            height: 14px;
+            font-size: 9px;
+        }
+
+        .indicator-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-buy {
+            background: #27ae60;
+        }
+
+        .badge-hold {
+            background: #f39c12;
+        }
+
+        .badge-sell {
+            background: #e74c3c;
+        }
+
+        .report-section {
+            margin-bottom: 15px;
+        }
+
+        .report-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .report-subtitle {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .report-text {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .metric-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .metric-label {
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-label .help-icon {
+            width: 12px;
+            height: 12px;
+            font-size: 8px;
+        }
+
+        .metric-value {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .confidence-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border: none;
+        }
+
+        .modal-close:active {
+            background: #d0d0d0;
+        }
+
+        .modal-body {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .tooltip-example {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+
+        .tooltip-example strong {
+            color: #3498db;
+        }
+
+        .asset-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .asset-search-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: #f8f9fa;
+        }
+
+        .asset-search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .asset-list {
+            max-height: calc(85vh - 180px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 5px;
+        }
+
+        .asset-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .asset-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .asset-list::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .asset-list::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        .asset-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .asset-item:hover {
+            border-color: #bdc3c7;
+            background: #fdfdfd;
+        }
+
+        .asset-item:active {
+            transform: scale(0.99);
+            background: #f5f5f5;
+        }
+
+        .asset-item.selected {
+            border-color: #3498db;
+            background: #e8f4f8;
+            box-shadow: 0 0 0 1px #3498db inset;
+        }
+
+        .asset-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .asset-item-symbol {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .asset-sector-tag {
+            font-size: 9px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .asset-name {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .no-results-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .nav-item:active {
+            background: #f8f9fa;
+        }
+
+        .nav-item.active {
+            background: #e8f4f8;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #3498db;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .main-content {
+                padding-bottom: calc(80px + env(safe-area-inset-bottom));
+            }
+            .bottom-nav {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+        <div class="back-btn" onclick="goBack()">‹</div>
+        <div class="header-content">
+            <div class="header-title">Relatórios & Índices</div>
+            <div class="header-subtitle" id="headerSubtitle">Carregando...</div>
+        </div>
+        <div class="header-icon">📊</div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="loading" id="loadingState">
+            <div class="loading-spinner"></div>
+            <p>Carregando dados históricos...</p>
+        </div>
+
+        <div id="contentContainer" style="display: none;">
+            <!-- Asset Selection -->
+            <div class="asset-card">
+                <div class="asset-header">
+                    <div>
+                        <div class="asset-symbol" id="assetSymbol">PETR4</div>
+                        <div class="asset-name-small" id="assetNameSmall">Petrobras PN</div>
+                    </div>
+                    <div class="change-btn" onclick="openAssetModal()">🔍 Trocar</div>
+                </div>
+                <div class="asset-price" id="assetPrice">R$ 35,50</div>
+                <div class="asset-change" id="assetChange">▲ +3.2% (+R$ 1,10)</div>
+            </div>
+
+            <!-- Sentiment Card (só mostra se houver dados) -->
+            <div class="sentiment-card" id="sentimentCard">
+                <div class="sentiment-header">
+                    <div class="sentiment-title">
+                        <div class="sentiment-icon">🎯</div>
+                        Sistema de Sentimento
+                        <span class="help-icon" onclick="showTooltip('sentimento')" id="helpSentimento">ℹ️</span>
+                    </div>
+                    <div class="accuracy-badge" id="accuracyBadge">75%</div>
+                </div>
+                
+                <div class="sentiment-body">
+                    <div class="sentiment-item">
+                        <div class="sentiment-label">Previsão</div>
+                        <div class="sentiment-value" id="sentimentPredicted">Alta</div>
+                    </div>
+                    <div class="sentiment-item">
+                        <div class="sentiment-label">Realidade</div>
+                        <div class="sentiment-value" id="sentimentActual">Alta</div>
+                    </div>
+                </div>
+                
+                <div class="sentiment-match" id="sentimentMatch">
+                    <div class="match-icon">✅</div>
+                    <div class="match-text">Previsão correta! O sistema acertou a direção do movimento.</div>
+                </div>
+            </div>
+
+            <!-- Period Selector -->
+            <div class="section-title">
+                📅 Período de Análise
+                <span class="help-icon" onclick="showTooltip('periodo')" id="helpPeriodo">ℹ️</span>
+            </div>
+            <div class="period-selector">
+                <div class="period-chip active" onclick="changePeriod(this, '1D')">1D</div>
+                <div class="period-chip" onclick="changePeriod(this, '7D')">7D</div>
+                <div class="period-chip" onclick="changePeriod(this, '1M')">1M</div>
+                <div class="period-chip" onclick="changePeriod(this, '3M')">3M</div>
+                <div class="period-chip" onclick="changePeriod(this, '6M')">6M</div>
+                <div class="period-chip" onclick="changePeriod(this, '1A')">1A</div>
+            </div>
+
+            <!-- Price Chart -->
+            <div class="asset-card">
+                <div class="section-title">📈 Histórico de Preços</div>
+                <div class="chart-container">
+                    <canvas id="priceChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Technical Indicators -->
+            <div class="indicators-card">
+                <div class="section-title">
+                    🔍 Indicadores Técnicos
+                    <span class="help-icon" onclick="showTooltip('indicadores')" id="helpIndicadores">ℹ️</span>
+                </div>
+                <div class="indicators-grid">
+                    <div class="indicator-item">
+                        <div class="indicator-label">
+                            SMA 20
+                            <span class="help-icon" onclick="showTooltip('sma20')" id="helpSma20">ℹ️</span>
+                        </div>
+                        <div class="indicator-value" id="sma20">-</div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-label">
+                            SMA 50
+                            <span class="help-icon" onclick="showTooltip('sma50')" id="helpSma50">ℹ️</span>
+                        </div>
+                        <div class="indicator-value" id="sma50">-</div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-label">
+                            SMA 200
+                            <span class="help-icon" onclick="showTooltip('sma200')" id="helpSma200">ℹ️</span>
+                        </div>
+                        <div class="indicator-value" id="sma200">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Report -->
+            <div class="report-card" id="reportCard">
+                <div class="report-header">
+                    <div class="section-title">
+                        📋 Relatório de Análise
+                        <span class="help-icon" onclick="showTooltip('relatorio')" id="helpRelatorio">ℹ️</span>
+                    </div>
+                    <div class="recommendation-badge" id="recommendationBadge">COMPRA</div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-subtitle">📊 Resumo Executivo</div>
+                    <div class="report-text" id="reportSummary">Carregando relatório...</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                    </div>
+                    <div style="font-size: 9px; color: #999; margin-top: 5px; text-align: right;">
+                        Confiança: <span id="confidenceText">0%</span>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-subtitle">
+                        📈 Análise Técnica
+                        <span class="help-icon" onclick="showTooltip('analise-tecnica')" id="helpAnaliseTecnica">ℹ️</span>
+                    </div>
+                    <div class="report-text">
+                        <div style="margin-bottom: 8px;">
+                            <strong>Tendência:</strong> <span id="trendText">-</span><br>
+                            <strong>Suporte:</strong> R$ <span id="supportText">-</span>
+                            <span class="help-icon" onclick="showTooltip('suporte')" id="helpSuporte">ℹ️</span><br>
+                            <strong>Resistência:</strong> R$ <span id="resistanceText">-</span>
+                            <span class="help-icon" onclick="showTooltip('resistencia')" id="helpResistencia">ℹ️</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-subtitle">
+                        💼 Análise Fundamentalista
+                        <span class="help-icon" onclick="showTooltip('analise-fundamentalista')" id="helpAnaliseFund">ℹ️</span>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-label">
+                                P/L
+                                <span class="help-icon" onclick="showTooltip('pl')" id="helpPL">ℹ️</span>
+                            </div>
+                            <div class="metric-value" id="peRatio">-</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">
+                                Div. Yield
+                                <span class="help-icon" onclick="showTooltip('dividendo')" id="helpDiv">ℹ️</span>
+                            </div>
+                            <div class="metric-value" id="divYield">-</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">
+                                ROE
+                                <span class="help-icon" onclick="showTooltip('roe')" id="helpROE">ℹ️</span>
+                            </div>
+                            <div class="metric-value" id="roe">-</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">
+                                Preço Alvo
+                                <span class="help-icon" onclick="showTooltip('preco-alvo')" id="helpPrecoAlvo">ℹ️</span>
+                            </div>
+                            <div class="metric-value" id="targetPrice">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-subtitle">⚠️ Riscos</div>
+                    <div class="report-text" id="risksText">Carregando...</div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-subtitle">✨ Oportunidades</div>
+                    <div class="report-text" id="opportunitiesText">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip Modal -->
+    <div class="modal-overlay" id="tooltipModal" onclick="closeTooltip()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="tooltipTitle">Termo</div>
+                <div class="modal-close" onclick="closeTooltip()">×</div>
+            </div>
+            <div class="modal-body" id="tooltipBody">
+                Explicação do termo...
+            </div>
+        </div>
+    </div>
+
+    <!-- Asset Selector Modal -->
+    <div class="modal-overlay" id="assetModal" onclick="closeAssetModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">🔍 Selecionar Ativo</div>
+                <div class="modal-close" onclick="closeAssetModal()">×</div>
+            </div>
+            <div class="modal-body">
+                <div class="asset-search">
+                    <input 
+                        type="text" 
+                        class="asset-search-input" 
+                        id="assetSearchInput"
+                        placeholder="Buscar ativo..."
+                        oninput="filterAssets()">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="asset-list" id="assetList">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item" onclick="goToAlerts()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-label">Alertas</div>
+        </div>
+        <div class="nav-item" onclick="goToNews()">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Notícias</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Relatórios</div>
+        </div>
+        <div class="nav-item" onclick="goToProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DATABASE ABSTRACTION LAYER (DB)
+        // ============================================
+        const DB = {
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+            getUserById(userId) {
+                const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                return users.find(u => u.id === userId);
+            },
+            getAvailableAssets() {
+                const assetsList = [];
+                const keys = Object.keys(localStorage).filter(k => k.startsWith('marketPulse_historical_'));
+
+                keys.forEach(key => {
+                    const symbol = key.replace('marketPulse_historical_', '');
+                    const details = assetDetails[symbol] || { name: symbol, sector: 'Desconhecido' };
+                    assetsList.push({
+                        symbol: symbol,
+                        name: details.name,
+                        sector: details.sector
+                    });
+                });
+
+                if (assetsList.length > 0) {
+                    return assetsList.sort((a, b) => a.symbol.localeCompare(b.symbol));
+                }
+
+                console.warn("Nenhum ativo histórico encontrado no localStorage, usando lista padrão.");
+                return [
+                    { symbol: 'PETR4', name: 'Petrobras PN', sector: 'Energia' },
+                    { symbol: 'VALE3', name: 'Vale ON', sector: 'Mineração' },
+                    { symbol: 'ITUB4', name: 'Itaú Unibanco PN', sector: 'Financeiro' },
+                    { symbol: 'BBDC4', name: 'Bradesco PN', sector: 'Financeiro' },
+                    { symbol: 'ABEV3', name: 'Ambev ON', sector: 'Consumo' },
+                    { symbol: 'WEGE3', name: 'WEG ON', sector: 'Industrial' },
+                    { symbol: 'MGLU3', name: 'Magazine Luiza ON', sector: 'Varejo' },
+                    { symbol: 'B3SA3', name: 'B3 ON', sector: 'Financeiro' },
+                    { symbol: 'SUZB3', name: 'Suzano ON', sector: 'Papel e Celulose' },
+                    { symbol: 'RENT3', name: 'Localiza ON', sector: 'Serviços' }
+                ].sort((a, b) => a.symbol.localeCompare(b.symbol));
+            },
+            getHistoricalData(symbol) {
+                const data = localStorage.getItem(`marketPulse_historical_${symbol}`);
+                return data ? JSON.parse(data) : null;
+            },
+            getTechnicalIndicators(symbol) {
+                const indicators = localStorage.getItem('marketPulse_technical_indicators');
+                const allIndicators = indicators ? JSON.parse(indicators) : {};
+                return allIndicators[symbol] || null;
+            },
+            getAnalysisReport(symbol) {
+                const reports = localStorage.getItem('marketPulse_analysis_reports');
+                const allReports = reports ? JSON.parse(reports) : {};
+                return allReports[symbol] || null;
+            },
+            getUserProfile(userId) {
+                const data = localStorage.getItem(`marketPulse_profile_${userId}`);
+                return data ? JSON.parse(data) : null;
+            },
+            getDictionary() {
+                const data = localStorage.getItem('marketPulse_dictionary');
+                return data ? JSON.parse(data) : {};
+            }
+        };
+
+        // ============================================
+        // GLOBALS & STATE
+        // ============================================
+        let currentState = {
+            symbol: null,
+            period: '1M',
+            historicalData: null,
+            filteredData: null,
+            report: null,
+            chartInstance: null
+        };
+        let tooltipsEnabled = false;
+        let dictionary = {};
+        let allAvailableAssets = [];
+        let filteredAssetsList = [];
+
+        const assetDetails = {
+            'PETR4': { name: 'Petrobras PN', sector: 'Energia' },
+            'VALE3': { name: 'Vale ON', sector: 'Mineração' },
+            'ITUB4': { name: 'Itaú Unibanco PN', sector: 'Financeiro' },
+            'BBDC4': { name: 'Bradesco PN', sector: 'Financeiro' },
+            'ABEV3': { name: 'Ambev ON', sector: 'Consumo' },
+            'WEGE3': { name: 'WEG ON', sector: 'Industrial' },
+            'MGLU3': { name: 'Magazine Luiza ON', sector: 'Varejo' },
+            'B3SA3': { name: 'B3 ON', sector: 'Financeiro' },
+            'SUZB3': { name: 'Suzano ON', sector: 'Papel e Celulose' },
+            'RENT3': { name: 'Localiza ON', sector: 'Serviços' }
+        };
+
+        // ============================================
+        // UTILS & TIME UPDATE
+        // ============================================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        // ============================================
+        // TOOLTIP SYSTEM
+        // ============================================
+        const tooltips = {
+            'periodo': {
+                title: '📅 Período de Análise',
+                text: 'É o intervalo de tempo que você está visualizando no gráfico e nos indicadores.',
+                example: '<strong>Exemplo:</strong> "1M" mostra os dados dos últimos 30 dias.'
+            },
+            'sentimento': {
+                title: '🎯 Sistema de Sentimento',
+                text: 'Compara a previsão de tendência (alta/baixa) feita pelo sistema (baseada em notícias e padrões) com o que realmente aconteceu com o preço no período.',
+                example: '<strong>Acurácia:</strong> Mostra a porcentagem de vezes que o sistema acertou a previsão para este ativo.'
+            },
+            'indicadores': {
+                title: '🔍 Indicadores Técnicos',
+                text: 'Cálculos baseados no histórico de preços que ajudam a identificar tendências e pontos de compra/venda.',
+                example: '<strong>SMA:</strong> Média Móvel Simples - suaviza a linha de preço para mostrar a tendência.'
+            },
+            'sma20': { title: 'SMA 20', text: 'Média Móvel Simples dos últimos 20 períodos. Usada para tendências de curto prazo.' },
+            'sma50': { title: 'SMA 50', text: 'Média Móvel Simples dos últimos 50 períodos. Usada para tendências de médio prazo.' },
+            'sma200': { title: 'SMA 200', text: 'Média Móvel Simples dos últimos 200 períodos. Usada para tendências de longo prazo.' },
+            'relatorio': {
+                title: '📋 Relatório de Análise',
+                text: 'Combina análise técnica (gráficos) e fundamentalista (saúde da empresa) para gerar uma recomendação.',
+                example: '<strong>Confiança:</strong> Indica o quão seguro o sistema está sobre a recomendação (COMPRA, MANTER, VENDA).'
+            },
+            'analise-tecnica': {
+                title: '📈 Análise Técnica',
+                text: 'Estudo dos movimentos de preço passados para prever movimentos futuros.',
+                example: '<strong>Tendência:</strong> Direção geral do preço (Altista, Baixista, Lateral).'
+            },
+            'suporte': { title: 'Suporte', text: 'Nível de preço onde a queda tende a parar, pois a força compradora aumenta.' },
+            'resistencia': { title: 'Resistência', text: 'Nível de preço onde a alta tende a parar, pois a força vendedora aumenta.' },
+            'analise-fundamentalista': {
+                title: '💼 Análise Fundamentalista',
+                text: 'Avaliação da saúde financeira e potencial de crescimento da empresa.',
+                example: '<strong>P/L (Preço/Lucro):</strong> Quanto o mercado paga por cada real de lucro da empresa.'
+            },
+            'pl': { title: 'P/L (Preço/Lucro)', text: 'Indica se a ação está "cara" ou "barata" em relação aos lucros. Quanto menor, mais barata tende a estar.' },
+            'dividendo': { title: 'Dividend Yield', text: 'Percentual do preço da ação pago em dividendos nos últimos 12 meses.' },
+            'roe': { title: 'ROE (Return on Equity)', text: 'Rentabilidade da empresa sobre seu próprio patrimônio. Quanto maior, melhor.' },
+            'preco-alvo': { title: 'Preço Alvo', text: 'Estimativa de preço justo para a ação com base na análise fundamentalista.' }
+        };
+
+        function showTooltip(key) {
+            if (!tooltipsEnabled) return;
+            const tooltipData = tooltips[key] || dictionary[key.toUpperCase()];
+            if (!tooltipData) return;
+
+            document.getElementById('tooltipTitle').textContent = tooltipData.title || key.toUpperCase();
+            document.getElementById('tooltipBody').innerHTML =
+                (tooltipData.text || tooltipData) +
+                (tooltipData.example ? `<div class="tooltip-example">${tooltipData.example}</div>` : '');
+
+            document.getElementById('tooltipModal').classList.add('show');
+        }
+
+        function closeTooltip() {
+            document.getElementById('tooltipModal').classList.remove('show');
+        }
+
+        function enableTooltips() {
+            tooltipsEnabled = true;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.add('show');
+            });
+        }
+
+        function disableTooltips() {
+            tooltipsEnabled = false;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.remove('show');
+            });
+        }
+
+        function checkTooltipSettings() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) return;
+
+            const profile = DB.getUserProfile(currentUser.id);
+            if (profile?.preferences?.showTooltips) {
+                enableTooltips();
+            } else {
+                disableTooltips();
+            }
+        }
+
+        // ============================================
+        // CORE DATA LOADING & PROCESSING
+        // ============================================
+        function loadData() {
+            console.log('🔄 Iniciando loadData()...');
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('contentContainer').style.display = 'none';
+
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) {
+                alert('⚠️ Nenhum usuário logado!');
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+
+            dictionary = DB.getDictionary();
+            checkTooltipSettings();
+
+            allAvailableAssets = DB.getAvailableAssets();
+            console.log('📊 Ativos disponíveis:', allAvailableAssets.length);
+
+            let assetToLoad = sessionStorage.getItem('selectedAsset');
+            if (assetToLoad) {
+                sessionStorage.removeItem('selectedAsset');
+                console.log(`✅ Carregando ativo da sessão: ${assetToLoad}`);
+            } else {
+                assetToLoad = localStorage.getItem('lastViewedAsset');
+                console.log(`📌 Carregando último ativo visto: ${assetToLoad}`);
+            }
+
+            if (!assetToLoad && allAvailableAssets.length > 0) {
+                assetToLoad = allAvailableAssets[0].symbol;
+                console.log(`🎯 Usando primeiro ativo disponível: ${assetToLoad}`);
+            } else if (!assetToLoad) {
+                assetToLoad = 'PETR4';
+                console.log(`⚠️ Fallback para: ${assetToLoad}`);
+            }
+
+            currentState.symbol = assetToLoad;
+            localStorage.setItem('lastViewedAsset', currentState.symbol);
+
+            const historicalData = DB.getHistoricalData(currentState.symbol);
+            console.log(`📈 Dados históricos de ${currentState.symbol}:`, historicalData ? historicalData.length : 0, 'pontos');
+
+            if (!historicalData || historicalData.length === 0) {
+                showEmptyState(currentState.symbol);
+                return;
+            }
+
+            currentState.historicalData = historicalData;
+            filterDataByPeriod(currentState.period);
+            loadTechnicalIndicators();
+            loadAnalysisReport();
+            updateAssetDisplay();
+            updateSentimentCard();
+
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentContainer').style.display = 'block';
+
+            setTimeout(() => drawChart(), 100);
+        }
+
+        function filterDataByPeriod(period) {
+            currentState.period = period;
+            const now = Date.now();
+            let cutoffTimestamp;
+            const dayMs = 86400000;
+
+            switch(period) {
+                case '1D': cutoffTimestamp = now - dayMs; break;
+                case '7D': cutoffTimestamp = now - (7 * dayMs); break;
+                case '1M': cutoffTimestamp = now - (30 * dayMs); break;
+                case '3M': cutoffTimestamp = now - (90 * dayMs); break;
+                case '6M': cutoffTimestamp = now - (180 * dayMs); break;
+                case '1A': cutoffTimestamp = now - (365 * dayMs); break;
+                default: cutoffTimestamp = now - (30 * dayMs);
+            }
+
+            if (!currentState.historicalData) {
+                console.error("❌ Dados históricos não carregados para filtrar.");
+                currentState.filteredData = [];
+                document.getElementById('headerSubtitle').textContent = `0 pontos`;
+                return;
+            }
+
+            currentState.filteredData = currentState.historicalData.filter(d => d.timestamp >= cutoffTimestamp);
+
+            if (currentState.filteredData.length < 2 && currentState.historicalData.length >= 2) {
+                console.warn(`⚠️ Período ${period} resultou em menos de 2 pontos, usando os 2 últimos disponíveis.`);
+                currentState.filteredData = currentState.historicalData.slice(-2);
+            } else if (currentState.historicalData.length < 2) {
+                console.warn(`⚠️ Não há dados suficientes para o período ${period}.`);
+                currentState.filteredData = currentState.historicalData;
+            }
+
+            document.getElementById('headerSubtitle').textContent = `${currentState.filteredData.length} pontos`;
+        }
+
+        function loadTechnicalIndicators() {
+            const indicators = DB.getTechnicalIndicators(currentState.symbol);
+
+            document.getElementById('sma20').textContent = '-';
+            document.getElementById('sma50').textContent = '-';
+            document.getElementById('sma200').textContent = '-';
+
+            if (indicators) {
+                document.getElementById('sma20').textContent = indicators.sma20 ? `R$ ${indicators.sma20.toFixed(2)}` : '-';
+                document.getElementById('sma50').textContent = indicators.sma50 ? `R$ ${indicators.sma50.toFixed(2)}` : '-';
+                document.getElementById('sma200').textContent = indicators.sma200 ? `R$ ${indicators.sma200.toFixed(2)}` : '-';
+            } else {
+                console.warn(`⚠️ Indicadores técnicos não encontrados para ${currentState.symbol}`);
+            }
+        }
+
+        function loadAnalysisReport() {
+            const report = DB.getAnalysisReport(currentState.symbol);
+            const reportCard = document.getElementById('reportCard');
+
+            reportCard.style.display = 'block';
+            document.getElementById('reportSummary').textContent = 'Carregando...';
+            document.getElementById('confidenceFill').style.width = '0%';
+            document.getElementById('confidenceText').textContent = '0%';
+            document.getElementById('trendText').textContent = '-';
+            document.getElementById('supportText').textContent = '-';
+            document.getElementById('resistanceText').textContent = '-';
+            document.getElementById('peRatio').textContent = '-';
+            document.getElementById('divYield').textContent = '-';
+            document.getElementById('roe').textContent = '-';
+            document.getElementById('targetPrice').textContent = '-';
+            document.getElementById('risksText').textContent = 'Carregando...';
+            document.getElementById('opportunitiesText').textContent = 'Carregando...';
+            const recBadge = document.getElementById('recommendationBadge');
+            recBadge.textContent = '...';
+            recBadge.className = 'recommendation-badge';
+
+            if (!report) {
+                console.warn(`⚠️ Relatório de análise não encontrado para ${currentState.symbol}`);
+                reportCard.innerHTML = `<div class="empty-state" style="padding: 20px;"><div class="empty-icon">📋</div><div>Relatório não disponível para ${currentState.symbol}</div></div>`;
+                return;
+            }
+
+            currentState.report = report;
+
+            const recText = report.technicalAnalysis?.recommendation || 'MANTER';
+            recBadge.textContent = recText;
+            recBadge.className = 'recommendation-badge ' +
+                (recText === 'COMPRA' ? 'badge-buy' : recText === 'MANTER' ? 'badge-hold' : 'badge-sell');
+
+            document.getElementById('reportSummary').textContent = report.summary || 'Não disponível';
+
+            const confidence = report.technicalAnalysis?.confidence || 0;
+            document.getElementById('confidenceFill').style.width = confidence + '%';
+            document.getElementById('confidenceText').textContent = confidence + '%';
+
+            document.getElementById('trendText').textContent = report.technicalAnalysis?.trend || '-';
+            document.getElementById('supportText').textContent = report.technicalAnalysis?.support?.toFixed(2) || '-';
+            document.getElementById('resistanceText').textContent = report.technicalAnalysis?.resistance?.toFixed(2) || '-';
+
+            document.getElementById('peRatio').textContent = report.fundamentalAnalysis?.pe?.toFixed(1) || '-';
+            document.getElementById('divYield').textContent = report.fundamentalAnalysis?.dividendYield ? `${report.fundamentalAnalysis.dividendYield.toFixed(1)}%` : '-';
+            document.getElementById('roe').textContent = report.fundamentalAnalysis?.roe ? `${report.fundamentalAnalysis.roe.toFixed(1)}%` : '-';
+            document.getElementById('targetPrice').textContent = report.fundamentalAnalysis?.targetPrice ? `R$ ${report.fundamentalAnalysis.targetPrice.toFixed(2)}` : '-';
+
+            document.getElementById('risksText').textContent = report.risks || 'Não disponível';
+            document.getElementById('opportunitiesText').textContent = report.opportunities || 'Não disponível';
+        }
+
+        function updateSentimentCard() {
+            const report = currentState.report;
+            const sentimentCard = document.getElementById('sentimentCard');
+
+            sentimentCard.classList.remove('show');
+
+            if (!report || !report.sentiment || !report.sentiment.predicted || !report.sentiment.actual) {
+                console.log(`ℹ️ Dados de sentimento não disponíveis para ${currentState.symbol} - card ocultado`);
+                return;
+            }
+
+            const sentiment = report.sentiment;
+
+            document.getElementById('accuracyBadge').textContent = `${sentiment.accuracy?.toFixed(0) || 0}%`;
+            document.getElementById('sentimentPredicted').textContent = sentiment.predicted?.toUpperCase() || '-';
+            document.getElementById('sentimentActual').textContent = sentiment.actual?.toUpperCase() || '-';
+
+            const isCorrect = sentiment.predicted === sentiment.actual;
+            const matchDiv = document.getElementById('sentimentMatch');
+
+            if (isCorrect) {
+                matchDiv.innerHTML = `
+                    <div class="match-icon">✅</div>
+                    <div class="match-text">Previsão correta! O sistema acertou a direção.</div>
+                `;
+            } else {
+                matchDiv.innerHTML = `
+                    <div class="match-icon">❌</div>
+                    <div class="match-text">Previsão incorreta. O sistema está aprendendo.</div>
+                `;
+            }
+
+            sentimentCard.classList.add('show');
+        }
+
+        function updateAssetDisplay() {
+            if (!currentState.filteredData || currentState.filteredData.length === 0) {
+                console.warn("⚠️ Sem dados filtrados para atualizar display do ativo.");
+                document.getElementById('assetSymbol').textContent = currentState.symbol;
+                document.getElementById('assetNameSmall').textContent = assetDetails[currentState.symbol]?.name || currentState.symbol;
+                document.getElementById('assetPrice').textContent = 'R$ -';
+                document.getElementById('assetChange').textContent = '-';
+                document.getElementById('assetChange').className = 'asset-change';
+                return;
+            }
+
+            const lastData = currentState.filteredData[currentState.filteredData.length - 1];
+            const firstData = currentState.filteredData[0];
+
+            const currentPrice = lastData.close;
+            let change = 0;
+            let changePercent = 0;
+
+            if (currentState.filteredData.length > 1) {
+                const referencePrice = firstData.close;
+                if (referencePrice && referencePrice !== 0) {
+                    change = currentPrice - referencePrice;
+                    changePercent = (change / referencePrice) * 100;
+                }
+            }
+
+            document.getElementById('assetSymbol').textContent = currentState.symbol;
+            document.getElementById('assetNameSmall').textContent = assetDetails[currentState.symbol]?.name || currentState.symbol;
+            document.getElementById('assetPrice').textContent = `R$ ${currentPrice.toFixed(2)}`;
+
+            const arrow = change >= 0 ? '▲' : '▼';
+            const sign = change >= 0 ? '+' : '';
+            const changeEl = document.getElementById('assetChange');
+            changeEl.textContent = `${arrow} ${sign}${changePercent.toFixed(2)}% (${sign}R$ ${change.toFixed(2)})`;
+            changeEl.className = change >= 0 ? 'asset-change' : 'asset-change negative';
+        }
+
+        function showEmptyState(symbol) {
+            document.getElementById('loadingState').style.display = 'none';
+            const container = document.getElementById('contentContainer');
+            const assetName = assetDetails[symbol]?.name || symbol;
+            container.innerHTML = `
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div>
+                            <div class="asset-symbol">${symbol}</div>
+                            <div class="asset-name-small">${assetName}</div>
+                        </div>
+                        <div class="change-btn" onclick="openAssetModal()">🔍 Trocar</div>
+                    </div>
+                    <div class="asset-price">R$ -</div>
+                    <div class="asset-change">-</div>
+                </div>
+                <div class="empty-state" style="background: white; border-radius: 12px; padding: 40px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <div class="empty-icon">😕</div>
+                    <div style="font-size: 14px; margin-bottom: 10px;">Dados históricos não encontrados para ${symbol}.</div>
+                    <div style="font-size: 12px; color: #999; margin-bottom: 15px;">Verifique se o Seed Database foi executado ou tente outro ativo.</div>
+                    <button class="change-btn" onclick="openAssetModal()" style="padding: 10px 20px; border-radius: 8px;">🔍 Escolher Outro Ativo</button>
+                </div>
+            `;
+            container.style.display = 'block';
+        }
+
+
+        // ============================================
+        // CHART DRAWING (using Chart.js)
+        // ============================================
+        function drawChart() {
+            const canvas = document.getElementById('priceChart');
+            if (!canvas || !currentState.filteredData || currentState.filteredData.length === 0) {
+                console.warn("⚠️ Canvas ou dados não disponíveis para desenhar o gráfico.");
+                if(currentState.chartInstance) {
+                    currentState.chartInstance.destroy();
+                    currentState.chartInstance = null;
+                }
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#999';
+                ctx.textAlign = 'center';
+                ctx.fillText("Dados insuficientes para exibir o gráfico.", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+
+            if (currentState.chartInstance) {
+                currentState.chartInstance.destroy();
+            }
+
+            const labels = currentState.filteredData.map(d => d.timestamp);
+            const prices = currentState.filteredData.map(d => d.close);
+
+            const startPrice = prices[0];
+            const endPrice = prices[prices.length - 1];
+            const borderColor = endPrice >= startPrice ? 'rgb(39, 174, 96)' : 'rgb(231, 76, 60)';
+            const backgroundColor = endPrice >= startPrice ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)';
+
+            currentState.chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Preço (${currentState.symbol})`,
+                        data: prices,
+                        borderColor: borderColor,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: determineTimeUnit(currentState.period),
+                                tooltipFormat: 'dd/MM/yy HH:mm',
+                                displayFormats: {
+                                    hour: 'HH:mm',
+                                    day: 'dd/MM',
+                                    month: 'MM/yy'
+                                }
+                            },
+                            ticks: {
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 6
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            position: 'right',
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return 'R$ ' + value.toFixed(2);
+                                },
+                                maxTicksLimit: 5
+                            },
+                            grid: {
+                                color: '#e0e0e0',
+                                borderDash: [2, 3],
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        function determineTimeUnit(period) {
+            switch(period) {
+                case '1D': return 'hour';
+                case '7D': return 'day';
+                case '1M': return 'day';
+                case '3M': return 'day';
+                case '6M': return 'month';
+                case '1A': return 'month';
+                default: return 'day';
+            }
+        }
+
+        // ============================================
+        // EVENT HANDLERS & NAVIGATION
+        // ============================================
+        function changePeriod(element, period) {
+            document.querySelectorAll('.period-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            filterDataByPeriod(period);
+            updateAssetDisplay();
+            setTimeout(() => drawChart(), 50);
+        }
+
+        // ============================================
+        // ASSET MODAL FUNCTIONS
+        // ============================================
+        function openAssetModal() {
+            console.log('🔍 Abrindo modal de seleção de ativos...');
+            document.getElementById('assetSearchInput').value = '';
+            filteredAssetsList = [...allAvailableAssets];
+            renderAssetList();
+            document.getElementById('assetModal').classList.add('show');
+            setTimeout(() => document.getElementById('assetSearchInput').focus(), 300);
+        }
+
+        function closeAssetModal() {
+            console.log('❌ Fechando modal de seleção de ativos...');
+            document.getElementById('assetModal').classList.remove('show');
+        }
+
+        function renderAssetList() {
+            const container = document.getElementById('assetList');
+            if (!container) return;
+
+            if (filteredAssetsList.length === 0) {
+                container.innerHTML = '<div class="no-results"><div class="no-results-icon">🚫</div><div>Nenhum ativo encontrado</div></div>';
+                return;
+            }
+
+            container.innerHTML = filteredAssetsList.map(asset => `
+                <div class="asset-item ${asset.symbol === currentState.symbol ? 'selected' : ''}"
+                     onclick="selectAssetFromList('${asset.symbol}')">
+                    <div class="asset-item-header">
+                        <span class="asset-item-symbol">${asset.symbol}</span>
+                        <span class="asset-sector-tag">${asset.sector}</span>
+                    </div>
+                    <div class="asset-name">${asset.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterAssets() {
+            const searchTerm = document.getElementById('assetSearchInput').value.toLowerCase();
+
+            if (!searchTerm) {
+                filteredAssetsList = [...allAvailableAssets];
+            } else {
+                filteredAssetsList = allAvailableAssets.filter(asset =>
+                    asset.symbol.toLowerCase().includes(searchTerm) ||
+                    asset.name.toLowerCase().includes(searchTerm) ||
+                    asset.sector.toLowerCase().includes(searchTerm)
+                );
+            }
+            renderAssetList();
+        }
+
+        function selectAssetFromList(symbol) {
+            console.log(`✅ Ativo selecionado: ${symbol}`);
+            
+            if (currentState.symbol === symbol) {
+                console.log("ℹ️ Ativo já selecionado, fechando modal.");
+                closeAssetModal();
+                return;
+            }
+
+            currentState.symbol = symbol;
+            localStorage.setItem('lastViewedAsset', symbol);
+            closeAssetModal();
+
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('contentContainer').style.display = 'none';
+
+            setTimeout(() => {
+                const historicalData = DB.getHistoricalData(symbol);
+                console.log(`📊 Dados históricos de ${symbol}:`, historicalData ? historicalData.length : 0, 'pontos');
+
+                if (!historicalData || historicalData.length === 0) {
+                    showEmptyState(symbol);
+                    return;
+                }
+
+                currentState.historicalData = historicalData;
+                
+                document.querySelectorAll('.period-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                    if (chip.textContent === '1M') {
+                        chip.classList.add('active');
+                    }
+                });
+                currentState.period = '1M';
+                
+                filterDataByPeriod(currentState.period);
+                loadTechnicalIndicators();
+                loadAnalysisReport();
+                updateAssetDisplay();
+                updateSentimentCard();
+
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('contentContainer').style.display = 'block';
+
+                setTimeout(() => drawChart(), 100);
+            }, 100);
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                goToHome();
+            }
+        }
+
+        function goToHome() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToAlerts() {
+            window.location.href = 'tela2-notificacoes.html';
+        }
+
+        function goToNews() {
+            window.location.href = 'tela3-noticias.html';
+        }
+
+        function goToProfile() {
+            window.location.href = 'tela7-perfil.html';
+        }
+
+        // ============================================
+        // INIT & RESIZE LISTENER
+        // ============================================
+        window.addEventListener('load', function() {
+            console.log('📊 Market Pulse - Histórico v6.0 REFATORADO E CORRIGIDO');
+            console.log('✅ Sistema carregado');
+            console.log('');
+            console.log('🔧 CORREÇÕES v6.0:');
+            console.log('✅ Modal "Trocar Ativo" totalmente funcional');
+            console.log('✅ Carrega dados de QUALQUER ativo disponível');
+            console.log('✅ Card de sentimento só aparece quando houver dados');
+            console.log('✅ Sistema de busca e filtro de ativos melhorado');
+            console.log('✅ Feedback visual aprimorado durante carregamento');
+            console.log('✅ Estado vazio com opção de trocar ativo');
+            console.log('');
+
+            loadData();
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (currentState.chartInstance) {
+                        drawChart();
+                    }
+                }, 250);
+            });
+        });
+
+        window.DB = DB;
+        window.currentState = currentState;
+    </script>
+</body>
+</html>

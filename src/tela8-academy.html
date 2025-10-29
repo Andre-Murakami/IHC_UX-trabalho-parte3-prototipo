@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Academy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 101;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #3498db;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 90px;
+            margin-top: 100px;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .welcome-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            border-radius: 20px;
+            font-size: 12px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tab-item {
+            padding: 12px 20px;
+            text-align: center;
+            flex: 1;
+            font-weight: 600;
+            font-size: 14px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .tab-item.active {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* GLOSSÁRIO */
+        .accordion-item {
+            margin-bottom: 12px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .accordion-header {
+            padding: 18px 20px;
+            background-color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 15px;
+        }
+
+        .accordion-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        .accordion-icon {
+            font-size: 20px;
+            color: #8B5CF6;
+            margin-right: 12px;
+        }
+
+        .accordion-arrow {
+            font-size: 18px;
+            color: #9ca3af;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-arrow.rotate {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background-color: #f7f9fb;
+        }
+
+        .accordion-content.open {
+            max-height: 500px;
+            padding: 16px 20px 20px;
+        }
+
+        .accordion-content p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* DICAS */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .tip-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            border-left: 4px solid #8B5CF6;
+            transition: all 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139,92,246,0.2);
+        }
+
+        .tip-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .tip-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+
+        .tip-subtitle {
+            font-size: 13px;
+            color: #8B5CF6;
+            font-weight: 500;
+        }
+
+        /* QUIZ */
+        .quiz-container {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .quiz-status {
+            font-size: 13px;
+            font-weight: 600;
+            color: #8B5CF6;
+            margin-bottom: 20px;
+            text-align: center;
+            background: #f3f0ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .quiz-question {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .quiz-option {
+            padding: 18px 20px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+
+        .quiz-option:hover {
+            border-color: #8B5CF6;
+            background: #f9f7ff;
+            transform: translateX(4px);
+        }
+
+        .option-letter {
+            font-weight: 700;
+            font-size: 16px;
+            color: #8B5CF6;
+            min-width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f0ff;
+            border-radius: 50%;
+        }
+
+        .quiz-option.selected {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            border-color: transparent;
+            color: white;
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(139,92,246,0.4);
+        }
+
+        .quiz-option.selected .option-letter {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .quiz-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139,92,246,0.3);
+        }
+
+        .quiz-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139,92,246,0.4);
+        }
+
+        .quiz-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .quiz-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .nav-item.active {
+            background: #f3f0ff;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #8B5CF6;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #8B5CF6;
+            font-weight: 600;
+        }
+
+        /* SIDE MENU */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .menu-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .menu-header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            padding: 40px 20px 20px;
+            color: white;
+        }
+
+        .menu-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .menu-info h3 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .menu-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .menu-items {
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+        }
+
+        .menu-item.active {
+            background: #f3f0ff;
+            border-left-color: #8B5CF6;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-text {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-body {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139,92,246,0.4);
+        }
+
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .status-bar {
+                padding-top: calc(8px + env(safe-area-inset-top));
+            }
+            
+            .header {
+                top: calc(44px + env(safe-area-inset-top));
+            }
+            
+            .main-content {
+                margin-top: calc(100px + env(safe-area-inset-top));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="header-title">Market Pulse - Academy</div>
+        <div class="profile-icon" onclick="goToProfile()" id="profileAvatar">👤</div>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <div class="welcome-text">Bem-vindo à Academy,</div>
+            <div class="welcome-name" id="userName">...</div>
+            <span class="user-badge" id="userBadge">🎓 Aprenda Mais</span>
+        </div>
+
+        <div class="tab-bar">
+            <div class="tab-item active" data-tab="glossary" onclick="switchTab('glossary')">Glossário</div>
+            <div class="tab-item" data-tab="tips" onclick="switchTab('tips')">Dicas</div>
+            <div class="tab-item" data-tab="quiz" onclick="switchTab('quiz')">Quiz</div>
+        </div>
+
+        <div id="glossary" class="tab-content active">
+            <div id="glossary-list"></div>
+        </div>
+
+        <div id="tips" class="tab-content">
+            <div class="tips-grid" id="tips-list"></div>
+        </div>
+
+        <div id="quiz" class="tab-content">
+            <div class="quiz-container">
+                <div class="quiz-status" id="quiz-status"></div>
+                <h3 class="quiz-question" id="question-text"></h3>
+                <div class="quiz-options" id="answer-options"></div>
+                <button class="quiz-button" id="next-button" onclick="nextQuestion()">
+                    Próxima Pergunta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reusableModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 class="modal-title" id="modal-title"></h3>
+            <div class="modal-body" id="modal-body"></div>
+            <button class="modal-button" onclick="closeModal()">FECHAR</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item" onclick="goToAlerts()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-label">Alertas</div>
+        </div>
+        <div class="nav-item" onclick="goToNews()">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Notícias</div>
+        </div>
+        <div class="nav-item" onclick="goToReport()">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Relatórios</div>
+        </div>
+        <div class="nav-item active" onclick="goToAcademy()">
+            <div class="nav-icon">🎓</div>
+            <div class="nav-label">Academy</div>
+        </div>
+        <div class="nav-item" onclick="goToProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-profile">
+                <div class="menu-avatar" id="menuAvatar">👤</div>
+                <div class="menu-info">
+                    <h3 id="menuName">Usuário</h3>
+                    <p id="menuEmail">email@exemplo.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="menu-items">
+            <div class="menu-item" onclick="goToHome()">
+                <div class="menu-icon">🏠</div>
+                <div class="menu-text">Dashboard</div>
+            </div>
+            <div class="menu-item" onclick="goToAlerts()">
+                <div class="menu-icon">🔔</div>
+                <div class="menu-text">Meus Alertas</div>
+            </div>
+            <div class="menu-item" onclick="goToNews()">
+                <div class="menu-icon">📰</div>
+                <div class="menu-text">Notícias</div>
+            </div>
+            <div class="menu-item" onclick="goToReport()">
+                <div class="menu-icon">📊</div>
+                <div class="menu-text">Relatórios</div>
+            </div>
+            <div class="menu-item active" onclick="goToAcademy()">
+                <div class="menu-icon">🎓</div>
+                <div class="menu-text">Academy</div>
+            </div>
+            <div class="menu-item" onclick="goToProfile()">
+                <div class="menu-icon">👤</div>
+                <div class="menu-text">Perfil</div>
+            </div>
+            <div class="menu-item" onclick="logout()">
+                <div class="menu-icon">🚪</div>
+                <div class="menu-text">Sair</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const glossaryData = [
+            { term: "Ativo", definition: "Qualquer bem ou direito que uma empresa ou pessoa possui e que pode ser convertido em dinheiro. Exemplos: ações, imóveis, títulos de dívida.", icon: "💼" },
+            { term: "Volatilidade", definition: "Medida da frequência e intensidade das variações de preço de um ativo. Alta volatilidade significa que o preço pode subir ou cair drasticamente em um curto período.", icon: "📈" },
+            { term: "Liquidez", definition: "A facilidade com que um ativo pode ser comprado ou vendido no mercado sem afetar significativamente seu preço. Quanto maior a liquidez, mais fácil é se desfazer do ativo.", icon: "💧" },
+            { term: "Renda Variável", definition: "Investimentos cuja remuneração ou retorno não é previsível no momento da aplicação, pois depende das condições de mercado (ex: Ações, Fundos Imobiliários).", icon: "📊" },
+            { term: "Renda Fixa", definition: "Investimentos que possuem regras de remuneração definidas no momento da aplicação (ex: Tesouro Direto, CDBs, LCIs).", icon: "🪙" },
+            { term: "Diversificação", definition: "Estratégia de investir em diferentes ativos para reduzir riscos. Evita que uma perda em um investimento afete toda a carteira.", icon: "🎯" },
+            { term: "Alavancagem", definition: "Uso de dívida para ampliar o potencial de retorno de um investimento. Pode aumentar ganhos, mas também perdas.", icon: "⚙️" },
+            { term: "Inflação", definition: "Aumento geral e contínuo dos preços de bens e serviços em uma economia, reduzindo o poder de compra da moeda.", icon: "📉" },
+            { term: "Juros Compostos", definition: "Cálculo de juros sobre o principal e sobre os juros acumulados de períodos anteriores, acelerando o crescimento do investimento.", icon: "💹" },
+            { term: "Bolsa de Valores", definition: "Mercado organizado onde se negociam títulos e valores mobiliários, como ações de empresas.", icon: "🏢" },
+            { term: "Dividendos", definition: "Parte do lucro de uma empresa distribuída aos acionistas, geralmente em dinheiro ou ações adicionais.", icon: "💰" },
+            { term: "Índice de Mercado", definition: "Indicador que representa o desempenho de um grupo de ações, como o Ibovespa no Brasil.", icon: "📊" },
+            { term: "Fundo de Investimento", definition: "Veículo coletivo onde investidores aplicam recursos em uma carteira gerenciada por profissionais.", icon: "🐷" },
+            { term: "Câmbio", definition: "Taxa de conversão entre moedas de diferentes países, influenciada por fatores econômicos globais.", icon: "💱" },
+            { term: "Derivativos", definition: "Contratos financeiros cujo valor deriva de um ativo subjacente, como opções e futuros.", icon: "🔀" },
+            { term: "IPO", definition: "Initial Public Offering: Abertura de capital de uma empresa na bolsa pela primeira vez.", icon: "✨" },
+            { term: "Bear Market", definition: "Mercado em queda prolongada, com pessimismo e vendas generalizadas.", icon: "🐻" },
+            { term: "Bull Market", definition: "Mercado em alta prolongada, com otimismo e compras generalizadas.", icon: "🐂" },
+            { term: "Análise Fundamentalista", definition: "Avaliação de empresas baseada em balanços, receitas e perspectivas econômicas.", icon: "🔍" },
+            { term: "Análise Técnica", definition: "Estudo de padrões gráficos e indicadores para prever movimentos de preços.", icon: "📉" },
+            { term: "Stop Loss", definition: "Ordem para vender um ativo quando atinge um preço mínimo, limitando perdas.", icon: "🛡️" },
+            { term: "Take Profit", definition: "Ordem para vender um ativo quando atinge um preço alvo, garantindo lucros.", icon: "✅" },
+            { term: "Volatilidade Implícita", definition: "Medida de expectativa de variação futura de preços, usada em opções.", icon: "⚡" },
+            { term: "Beta", definition: "Medida de volatilidade de um ativo em relação ao mercado como um todo.", icon: "📊" },
+            { term: "ROE", definition: "Return on Equity: Retorno sobre o patrimônio líquido, medindo eficiência.", icon: "↗️" },
+            { term: "ROA", definition: "Return on Assets: Retorno sobre os ativos, avaliando uso de recursos.", icon: "↖️" },
+            { term: "P/L", definition: "Preço/Lucro: Relação entre preço da ação e lucro por ação.", icon: "⚖️" },
+            { term: "EBITDA", definition: "Lucro antes de juros, impostos, depreciação e amortização.", icon: "🧮" },
+            { term: "Margem Bruta", definition: "Porcentagem de receita restante após custos de produção.", icon: "📊" },
+            { term: "Margem Líquida", definition: "Porcentagem de receita que se torna lucro após todas as despesas.", icon: "💵" },
+            { term: "Tesouro Direto", definition: "Programa do governo para compra de títulos públicos por pessoas físicas.", icon: "🏛️" },
+            { term: "CDB", definition: "Certificado de Depósito Bancário: Título emitido por bancos para captação.", icon: "🏦" },
+            { term: "LCI", definition: "Letra de Crédito Imobiliário: Título isento de IR para financiamento imobiliário.", icon: "🏠" },
+            { term: "LCA", definition: "Letra de Crédito do Agronegócio: Similar à LCI, mas para agronegócio.", icon: "🌾" },
+            { term: "Debêntures", definition: "Títulos de dívida emitidos por empresas para captação de recursos.", icon: "📄" },
+            { term: "FII", definition: "Fundo de Investimento Imobiliário: Investe em imóveis e distribui rendimentos.", icon: "🏢" },
+            { term: "ETF", definition: "Exchange Traded Fund: Fundo negociado em bolsa que replica um índice.", icon: "🧺" },
+            { term: "Opções", definition: "Contratos que dão direito de comprar/vender um ativo a preço fixo.", icon: "🎲" },
+            { term: "Futuros", definition: "Contratos para compra/venda de ativo em data futura a preço predeterminado.", icon: "📅" },
+            { term: "Hedge", definition: "Estratégia para proteger investimentos contra riscos adversos.", icon: "🛡️" },
+            { term: "Arbitragem", definition: "Exploração de diferenças de preços em mercados diferentes para lucro sem risco.", icon: "⚡" },
+            { term: "Short Selling", definition: "Venda a descoberto: Vender ativo emprestado esperando queda para recomprar mais barato.", icon: "⬇️" },
+            { term: "Day Trade", definition: "Compra e venda de ativos no mesmo dia, aproveitando variações curtas.", icon: "⏰" },
+            { term: "Swing Trade", definition: "Operações que duram dias ou semanas, capturando tendências médias.", icon: "📈" },
+            { term: "Position Trade", definition: "Manutenção de posições por meses ou anos, focando em tendências longas.", icon: "📊" },
+            { term: "Selic", definition: "Taxa básica de juros da economia brasileira, definida pelo Banco Central.", icon: "💹" },
+            { term: "CDI", definition: "Certificado de Depósito Interbancário: Referência para rentabilidade de investimentos.", icon: "🏦" },
+            { term: "IPCA", definition: "Índice de Preços ao Consumidor Amplo: Medida oficial da inflação no Brasil.", icon: "📈" },
+            { term: "PIB", definition: "Produto Interno Bruto: Soma de todos os bens e serviços produzidos em um país.", icon: "🌍" },
+            { term: "Taxa de Câmbio", definition: "Preço de uma moeda em termos de outra, como dólar em reais.", icon: "💱" }
+        ];
+
+        const tipsData = [
+            { title: "Como Usar o App", body: "Maximize o uso da ferramenta configurando alertas personalizados (tela de Alertas) e mantendo sua Watchlist atualizada (tela de Perfil). O Dashboard te dá um resumo rápido, e o Histórico mostra a acurácia das nossas previsões.", icon: "📱" },
+            { title: "Diversificação", body: "Nunca coloque todos os ovos na mesma cesta. Distribua seus investimentos em diferentes classes de ativos (ações, renda fixa, fundos) para reduzir o risco e aumentar o potencial de retorno.", icon: "🎯" },
+            { title: "Acompanhando o Mercado", body: "Foque em eventos macroeconômicos (inflação, taxas de juros), relatórios de grandes bancos e, claro, nas notícias em tempo real que disparam nossos alertas. Não tente adivinhar, reaja à informação.", icon: "📈" },
+            { title: "Análise de Empresas", body: "Estude os fundamentos (balanços, receitas, dívidas). Para setores, observe as tendências globais e regulamentações. Setores cíclicos (commodities) reagem diferente de setores perenes (energia, saúde).", icon: "🏢" },
+            { title: "Gestão de Riscos", body: "Defina limites de perda com stop loss e diversifique para mitigar impactos negativos em sua carteira.", icon: "🛡️" },
+            { title: "Investimento em Ações", body: "Escolha empresas com bom histórico de dividendos e crescimento sustentável para investimentos de longo prazo.", icon: "📊" },
+            { title: "Renda Fixa para Iniciantes", body: "Comece com títulos públicos via Tesouro Direto, que oferecem segurança e rentabilidades previsíveis.", icon: "🪙" },
+            { title: "Entendendo Volatilidade", body: "Use indicadores como o beta para medir o risco de um ativo em relação ao mercado geral.", icon: "📈" },
+            { title: "Planejamento Financeiro", body: "Estabeleça metas claras, como aposentadoria ou compra de casa, e ajuste investimentos conforme o prazo.", icon: "📅" },
+            { title: "Impacto da Inflação", body: "Proteja seu patrimônio investindo em ativos que superem a inflação, como ações ou imóveis.", icon: "📉" },
+            { title: "Uso de ETFs", body: "Invista em fundos que replicam índices para diversificação instantânea com baixos custos.", icon: "🧺" },
+            { title: "Estratégias de Day Trade", body: "Foquem em padrões gráficos e volume para entradas e saídas rápidas no mesmo dia.", icon: "⏰" },
+            { title: "Análise Técnica Básica", body: "Aprenda médias móveis e RSI para identificar tendências e pontos de reversão.", icon: "📉" },
+            { title: "Fundos Imobiliários", body: "Receba rendimentos mensais de aluguéis sem comprar imóveis diretamente.", icon: "🏠" },
+            { title: "Investindo em Commodities", body: "Acompanhe preços de ouro, petróleo e soja para hedge contra inflação.", icon: "🌾" },
+            { title: "Câmbio e Moedas", body: "Proteja-se de variações cambiais com contratos futuros ou fundos cambiais.", icon: "💱" },
+            { title: "Opções para Avançados", body: "Use calls e puts para estratégias de proteção ou especulação com alavancagem.", icon: "🎲" },
+            { title: "Controle Emocional", body: "Evite decisões impulsivas; siga um plano de investimento disciplinado.", icon: "🧠" },
+            { title: "Taxas e Custos", body: "Minimize fees escolhendo corretoras com baixas comissões e fundos eficientes.", icon: "🧮" },
+            { title: "Rebalanceamento de Carteira", body: "Ajuste periodicamente a alocação de ativos para manter o risco desejado.", icon: "⚖️" },
+            { title: "Investimento Sustentável", body: "Escolha empresas ESG para alinhar lucros com valores éticos e ambientais.", icon: "🌱" },
+            { title: "Criptomoedas", body: "Entenda blockchain e invista com cautela devido à alta volatilidade.", icon: "₿" },
+            { title: "Previdência Privada", body: "Planeje a aposentadoria com PGBL ou VGBL para benefícios fiscais.", icon: "🐷" },
+            { title: "Análise Macroeconômica", body: "Acompanhe PIB, desemprego e juros para prever tendências de mercado.", icon: "🌍" },
+            { title: "Value Investing", body: "Compre ações subvalorizadas com base em análise fundamentalista.", icon: "🔍" },
+            { title: "Growth Investing", body: "Foquem em empresas com alto potencial de crescimento futuro.", icon: "🚀" },
+            { title: "Momentum Trading", body: "Invista em ativos que mostram tendências fortes de alta recente.", icon: "📈" },
+            { title: "Contrarian Investing", body: "Compre quando o mercado está pessimista e venda no otimismo.", icon: "🔄" },
+            { title: "Setor de Tecnologia", body: "Aposte em inovação, mas diversifique para evitar bolhas.", icon: "💻" },
+            { title: "Setor de Energia", body: "Considere transições para renováveis em meio a mudanças climáticas.", icon: "⚡" },
+            { title: "Setor Financeiro", body: "Avalie bancos pela solidez e exposição a riscos econômicos.", icon: "🏦" },
+            { title: "Setor de Saúde", body: "Invista em farmacêuticas e biotech para crescimento demográfico.", icon: "🏥" },
+            { title: "Mercados Emergentes", body: "Oportunidades em países em desenvolvimento com maior risco.", icon: "🌍" },
+            { title: "Ouro como Reserva", body: "Use como hedge contra instabilidades econômicas globais.", icon: "🥇" },
+            { title: "Bonds Corporativos", body: "Avalie ratings de crédito para títulos de dívida empresariais.", icon: "📄" },
+            { title: "Crowdfunding Imobiliário", body: "Participe de projetos imobiliários com investimentos menores.", icon: "🏗️" },
+            { title: "Robo-Advisors", body: "Use IA para gerenciamento automático de carteiras.", icon: "🤖" },
+            { title: "Educação Financeira", body: "Leia livros como 'O Investidor Inteligente' para base sólida.", icon: "📚" },
+            { title: "Simulações de Investimento", body: "Pratique com contas demo antes de investir dinheiro real.", icon: "🎮" },
+            { title: "Impostos em Investimentos", body: "Entenda IR sobre ganhos de capital e isenções em certos títulos.", icon: "📋" }
+        ];
+
+        const quizQuestions = [
+            { question: "Qual o termo para a facilidade de vender um ativo rapidamente no mercado?", options: ["Volatilidade", "Rentabilidade", "Liquidez"], answer: "Liquidez" },
+            { question: "O que é considerado um investimento de Renda Variável?", options: ["CDB", "Tesouro Direto", "Ações da Petrobras"], answer: "Ações da Petrobras" },
+            { question: "Qual a função primária da Diversificação em uma carteira?", options: ["Maximizar o lucro em um único setor", "Reduzir o risco total", "Aumentar a liquidez imediatamente"], answer: "Reduzir o risco total" },
+            { question: "Alta frequência e intensidade de variação de preço define qual termo?", options: ["Alavancagem", "Volatilidade", "Gaps"], answer: "Volatilidade" },
+            { question: "O que é Inflação?", options: ["Queda de preços", "Aumento geral de preços", "Estabilidade econômica"], answer: "Aumento geral de preços" },
+            { question: "Qual o significado de IPO?", options: ["Initial Public Offering", "International Private Organization", "Investment Profit Opportunity"], answer: "Initial Public Offering" },
+            { question: "Bear Market representa:", options: ["Mercado em alta", "Mercado em queda", "Mercado estável"], answer: "Mercado em queda" },
+            { question: "Bull Market representa:", options: ["Mercado em alta", "Mercado em queda", "Mercado estável"], answer: "Mercado em alta" },
+            { question: "Análise Fundamentalista foca em:", options: ["Gráficos", "Balanços e receitas", "Volume de trades"], answer: "Balanços e receitas" },
+            { question: "Análise Técnica usa:", options: ["Padrões gráficos", "Relatórios econômicos", "Notícias políticas"], answer: "Padrões gráficos" },
+            { question: "Stop Loss serve para:", options: ["Limitar perdas", "Garantir lucros", "Aumentar alavancagem"], answer: "Limitar perdas" },
+            { question: "Take Profit serve para:", options: ["Limitar perdas", "Garantir lucros", "Aumentar alavancagem"], answer: "Garantir lucros" },
+            { question: "Beta mede:", options: ["Volatilidade relativa", "Lucro absoluto", "Liquidez"], answer: "Volatilidade relativa" },
+            { question: "ROE é:", options: ["Return on Equity", "Return on Expenses", "Risk of Equity"], answer: "Return on Equity" },
+            { question: "P/L significa:", options: ["Preço/Lucro", "Percentual/Liquidez", "Profit/Loss"], answer: "Preço/Lucro" },
+            { question: "EBITDA exclui:", options: ["Juros e impostos", "Receitas", "Despesas operacionais"], answer: "Juros e impostos" },
+            { question: "Tesouro Direto é:", options: ["Título público", "Ação privada", "Fundo mútuo"], answer: "Título público" },
+            { question: "CDB é emitido por:", options: ["Bancos", "Governo", "Empresas"], answer: "Bancos" },
+            { question: "LCI é isenta de:", options: ["IR", "IOF", "CPMF"], answer: "IR" },
+            { question: "Debêntures são:", options: ["Títulos de dívida empresarial", "Ações", "Fundos"], answer: "Títulos de dívida empresarial" },
+            { question: "FII investe em:", options: ["Imóveis", "Ações", "Moedas"], answer: "Imóveis" },
+            { question: "ETF replica:", options: ["Índices", "Empresas individuais", "Commodities específicas"], answer: "Índices" },
+            { question: "Opções dão direito de:", options: ["Comprar/vender a preço fixo", "Dividir lucros", "Votar em assembleias"], answer: "Comprar/vender a preço fixo" },
+            { question: "Hedge protege contra:", options: ["Riscos", "Lucros", "Inflação"], answer: "Riscos" },
+            { question: "Short Selling envolve:", options: ["Venda a descoberto", "Compra longa", "Hold infinito"], answer: "Venda a descoberto" },
+            { question: "Day Trade dura:", options: ["O mesmo dia", "Semanas", "Anos"], answer: "O mesmo dia" },
+            { question: "Selic é a taxa:", options: ["Básica de juros", "De câmbio", "De inflação"], answer: "Básica de juros" },
+            { question: "IPCA mede:", options: ["Inflação", "PIB", "Desemprego"], answer: "Inflação" },
+            { question: "PIB é a soma de:", options: ["Bens e serviços produzidos", "Importações", "Exportações líquidas"], answer: "Bens e serviços produzidos" },
+            { question: "Value Investing busca:", options: ["Ações subvalorizadas", "Ações em alta", "Ações voláteis"], answer: "Ações subvalorizadas" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let quizState = [];
+
+        function renderGlossary() {
+            const list = document.getElementById('glossary-list');
+            list.innerHTML = glossaryData.map(item => `
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span style="display: flex; align-items: center;">
+                            <span class="accordion-icon">${item.icon}</span>
+                            ${item.term}
+                        </span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>${item.definition}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAccordion(item) {
+            const content = item.querySelector('.accordion-content');
+            const arrow = item.querySelector('.accordion-arrow');
+            const isOpen = content.classList.contains('open');
+
+            document.querySelectorAll('.accordion-content.open').forEach(c => {
+                c.classList.remove('open');
+                c.closest('.accordion-item').querySelector('.accordion-arrow').classList.remove('rotate');
+            });
+            
+            if (!isOpen) {
+                content.classList.add('open');
+                arrow.classList.add('rotate');
+            }
+        }
+
+        function renderTips() {
+            const list = document.getElementById('tips-list');
+            list.innerHTML = tipsData.map(item => `
+                <div class="tip-card" onclick="showTipModal('${escapeHtml(item.title)}', '${escapeHtml(item.body)}', '${item.icon}')">
+                    <div class="tip-icon">${item.icon}</div>
+                    <div class="tip-title">${item.title}</div>
+                    <div class="tip-subtitle">Toque para saber mais</div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        function showTipModal(title, body, icon) {
+            const formattedBody = `<div style="text-align: center; font-size: 40px; margin-bottom: 16px;">${icon}</div><p style="line-height: 1.6;">${body}</p>`;
+            showModal(title, formattedBody);
+        }
+
+        function initializeQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            const shuffled = [...quizQuestions].sort(() => 0.5 - Math.random());
+            const selectedQuestions = shuffled.slice(0, 5);
+            quizState = selectedQuestions.map(q => ({
+                question: q.question,
+                options: q.options,
+                selected: null,
+                correct: q.answer
+            }));
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const state = quizState[currentQuestionIndex];
+            document.getElementById('quiz-status').textContent = `Pergunta ${currentQuestionIndex + 1} de ${quizState.length}`;
+            document.getElementById('question-text').textContent = state.question;
+            const optionsContainer = document.getElementById('answer-options');
+            optionsContainer.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C'];
+            state.options.forEach((option, index) => {
+                const isSelected = state.selected === option;
+                const optionElement = document.createElement('div');
+                optionElement.className = `quiz-option ${isSelected ? 'selected' : ''}`;
+                optionElement.innerHTML = `<span class="option-letter">${letters[index]}</span><span>${option}</span>`;
+                optionElement.onclick = () => selectAnswer(option);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            const button = document.getElementById('next-button');
+            button.disabled = !state.selected;
+            button.textContent = (currentQuestionIndex === quizState.length - 1) ? 'Ver Resultado' : 'Próxima Pergunta';
+        }
+
+        function selectAnswer(selectedOption) {
+            quizState[currentQuestionIndex].selected = selectedOption;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (!quizState[currentQuestionIndex].selected) return;
+
+            if (quizState[currentQuestionIndex].selected === quizState[currentQuestionIndex].correct) {
+                score++;
+            }
+            
+            if (currentQuestionIndex < quizState.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            const total = quizState.length;
+            const percentage = (score / total) * 100;
+            let title = '';
+            let message = '';
+            let icon = '';
+
+            if (percentage === 100) {
+                title = 'Parabéns, Expert! 🚀';
+                message = `Você acertou todas as ${total} perguntas. Seu conhecimento em finanças é excelente! Continue assim para dominar o mercado.`;
+                icon = '🏆';
+            } else if (percentage >= 75) {
+                title = 'Ótimo Desempenho! 💡';
+                message = `Você acertou ${score} de ${total} perguntas. Seus fundamentos são sólidos. Revise os termos errados para se tornar um profissional.`;
+                icon = '✨';
+            } else if (percentage >= 50) {
+                title = 'Bom Começo! 📚';
+                message = `Você acertou ${score} de ${total} perguntas. Você está no caminho certo! Explore mais o glossário e as dicas para melhorar.`;
+                icon = '📖';
+            } else {
+                title = 'Hora de Estudar! 🧠';
+                message = `Você acertou apenas ${score} de ${total} perguntas. Sem problemas! A Academy está aqui para isso. Comece pelo Glossário e tente o Quiz novamente.`;
+                icon = '📝';
+            }
+            
+            const resultBody = `
+                <div style="text-center margin-bottom: 20px;">
+                    <div style="font-size: 60px; margin-bottom: 12px;">${icon}</div>
+                    <p style="font-size: 36px; font-weight: bold; color: #2c3e50; margin-bottom: 8px;">${score}/${total}</p>
+                    <p style="font-size: 16px; color: #666;">Pontuação Final</p>
+                </div>
+                <p style="line-height: 1.6; color: #666;">${message}</p>
+            `;
+
+            showModal(title, resultBody);
+            initializeQuiz();
+        }
+
+        function showModal(title, body) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = body;
+            document.getElementById('reusableModal').classList.add('show');
+        }
+
+        function closeModal(event) {
+            if (!event || event.target.id === 'reusableModal') {
+                document.getElementById('reusableModal').classList.remove('show');
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'quiz') {
+                initializeQuiz();
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        const DB = {
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+            getUserById(userId) {
+                const users = JSON.parse(localStorage.getItem('marketPulse_users') || '[]');
+                return users.find(u => u.id === userId);
+            }
+        };
+
+        function loadUserData() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+            const user = DB.getUserById(currentUser.id);
+            document.getElementById('userName').textContent = user.name.split(' ')[0];
+            document.getElementById('userBadge').textContent = `${user.avatar} ${user.userType}`;
+            document.getElementById('profileAvatar').textContent = user.avatar;
+            document.getElementById('menuAvatar').textContent = user.avatar;
+            document.getElementById('menuName').textContent = user.name;
+            document.getElementById('menuEmail').textContent = user.email;
+        }
+
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('open');
+            document.getElementById('menuOverlay').classList.toggle('show');
+        }
+
+        function goToHome() { window.location.href = 'tela1-dashboard.html'; }
+        function goToAlerts() { window.location.href = 'tela2-notificacoes.html'; }
+        function goToNews() { window.location.href = 'tela3-noticias.html'; }
+        function goToReport() { window.location.href = 'tela5-historico.html'; }
+        function goToProfile() { window.location.href = 'tela7-perfil.html'; }
+        function goToAcademy() { window.location.href = 'tela8-academy.html'; }
+
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('marketPulse_currentUser');
+                window.location.href = 'tela6-login.html';
+            }
+        }
+
+        window.addEventListener('load', function() {
+            console.log('🎓 Market Pulse - Academy REFATORADA COMPLETA');
+            loadUserData();
+            renderGlossary();
+            renderTips();
+            switchTab('glossary');
+        });
+    </script>
+</body>
+</html>

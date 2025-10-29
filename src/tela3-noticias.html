@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Market Pulse - Notícias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 428px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 101;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-spacer {
+            width: 40px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 80px;
+            margin-top: 100px;
+        }
+
+        .stats-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-number.total { color: #3498db; }
+        .stat-number.positive { color: #27ae60; }
+        .stat-number.negative { color: #e74c3c; }
+        .stat-number.neutral { color: #555; }
+
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .search-section {
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            background: white;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
+        }
+
+        .filter-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            background: white;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        .filter-chip:active {
+            transform: scale(0.95);
+        }
+
+        .filter-chip.active {
+            border-color: currentColor;
+            font-weight: bold;
+        }
+
+        .filter-chip.all.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .filter-chip.positive {
+            color: #27ae60;
+        }
+
+        .filter-chip.positive.active {
+            background: #e8f5e9;
+            border-color: #27ae60;
+        }
+
+        .filter-chip.negative {
+            color: #e74c3c;
+        }
+
+        .filter-chip.negative.active {
+            background: #ffebee;
+            border-color: #e74c3c;
+        }
+
+        .filter-chip.neutral {
+            color: #555;
+        }
+
+        .filter-chip.neutral.active {
+            background: #f5f5f5;
+            border-color: #555;
+        }
+
+        .advanced-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-dropdown {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .news-card:active {
+            transform: scale(0.98);
+            background: #f8f9fa;
+        }
+
+        .news-card.read {
+            opacity: 0.7;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: -6px;
+            right: 8px;
+            background: linear-gradient(90deg, #764ba2 0%, #e74c3c 100%);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            transform: rotate(3deg);
+            box-shadow: 0 2px 8px rgba(118, 75, 162, 0.4);
+            z-index: 1;
+        }
+
+        .read-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e8f5e9;
+            color: #27ae60;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .news-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .impact-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            align-self: flex-start;
+        }
+
+        .badge-positive {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .badge-negative {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .badge-neutral {
+            background: linear-gradient(135deg, #7f8c8d 0%, #6c7a7b 100%);
+        }
+
+        .company-tag {
+            background: #e8f4f8;
+            color: #3498db;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            align-self: flex-start;
+        }
+
+        .news-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .news-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .news-summary {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sector-tag {
+            font-size: 11px;
+            color: #666;
+            background: #f8f9fa;
+            padding: 5px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .read-more {
+            color: #3498db;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .delete-news-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            transition: all 0.2s;
+        }
+
+        .delete-news-btn:active {
+            transform: scale(1.1);
+            color: #e74c3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        /* News Detail Modal */
+        .news-detail-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .modal-title-section {
+            padding-right: 40px;
+        }
+
+        .modal-impact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-company {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .modal-news-title {
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-news-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .modal-news-content p {
+            margin-bottom: 15px;
+        }
+
+        .modal-sector-info {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 22px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Confirm Delete Modal */
+        .confirm-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 320px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .confirm-header {
+            padding: 24px 20px 16px;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .confirm-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .confirm-message {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .confirm-actions {
+            display: flex;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .confirm-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            background: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .confirm-btn:first-child {
+            border-right: 1px solid #e0e0e0;
+            color: #666;
+        }
+
+        .confirm-btn:last-child {
+            color: #e74c3c;
+        }
+
+        .confirm-btn:active {
+            background: #f8f9fa;
+        }
+
+        /* Tooltip System */
+        .help-icon {
+            width: 18px;
+            height: 18px;
+            background: #e8f4f8;
+            color: #3498db;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .help-icon.show {
+            display: inline-flex;
+        }
+
+        .help-icon:active {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .tooltip-modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 360px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tooltip-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .tooltip-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .tooltip-close:active {
+            background: #e0e0e0;
+        }
+
+        .tooltip-body {
+            padding: 20px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .tooltip-example {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+
+        .tooltip-example strong {
+            color: #3498db;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .nav-item.active {
+            background: #e8f4f8;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #3498db;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .status-bar {
+                padding-top: calc(8px + env(safe-area-inset-top));
+            }
+            
+            .header {
+                top: calc(44px + env(safe-area-inset-top));
+            }
+            
+            .main-content {
+                margin-top: calc(100px + env(safe-area-inset-top));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-bar">
+        <span id="currentTime">9:41</span>
+        <span>📶 🔋</span>
+    </div>
+
+    <div class="header">
+        <div class="back-btn" onclick="goBack()">‹</div>
+        <div class="header-title">Notícias do Mercado</div>
+        <div class="header-spacer"></div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number total" id="totalNewsCount">0</div>
+                <div class="stat-label">
+                    Total
+                    <span class="help-icon" onclick="showTooltip('total-noticias')" id="helpTotalNoticias">ℹ️</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number positive" id="positiveCount">
+                    <span>↗</span> 0
+                </div>
+                <div class="stat-label">
+                    Positivas
+                    <span class="help-icon" onclick="showTooltip('noticias-positivas')" id="helpPositivas">ℹ️</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number negative" id="negativeCount">
+                    <span>↘</span> 0
+                </div>
+                <div class="stat-label">
+                    Negativas
+                    <span class="help-icon" onclick="showTooltip('noticias-negativas')" id="helpNegativas">ℹ️</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number neutral" id="neutralCount">
+                    <span>→</span> 0
+                </div>
+                <div class="stat-label">
+                    Neutras
+                    <span class="help-icon" onclick="showTooltip('noticias-neutras')" id="helpNeutras">ℹ️</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="🔍 Buscar notícias..." 
+                id="searchInput"
+                oninput="filterNews()">
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-chips">
+                <div class="filter-chip all active" data-filter="all" onclick="selectImpactFilter(this, 'all')">
+                    Todas
+                </div>
+                <div class="filter-chip positive" data-filter="positive" onclick="selectImpactFilter(this, 'positive')">
+                    <span>↗</span> Positivas
+                </div>
+                <div class="filter-chip negative" data-filter="negative" onclick="selectImpactFilter(this, 'negative')">
+                    <span>↘</span> Negativas
+                </div>
+                <div class="filter-chip neutral" data-filter="neutral" onclick="selectImpactFilter(this, 'neutral')">
+                    <span>→</span> Neutras
+                </div>
+            </div>
+
+            <div class="advanced-filters">
+                <div class="filter-dropdown">
+                    <select class="filter-select" id="sectorFilter" onchange="filterNews()">
+                        <option value="">Todos os Setores</option>
+                    </select>
+                </div>
+                <div class="filter-dropdown">
+                    <select class="filter-select" id="dateFilter" onchange="filterNews()">
+                        <option value="">Todas as Datas</option>
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Última Semana</option>
+                        <option value="month">Último Mês</option>
+                    </select>
+                </div>
+                <div class="filter-dropdown">
+                    <select class="filter-select" id="sourceFilter" onchange="filterNews()">
+                        <option value="">Todas as Fontes</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">
+                📰 Feed de Notícias
+                <span class="help-icon" onclick="showTooltip('feed-noticias')" id="helpFeedNoticias">ℹ️</span>
+            </div>
+            <div class="news-count" id="newsCount">0 notícias</div>
+        </div>
+
+        <div id="newsFeed"></div>
+    </div>
+
+    <!-- News Detail Modal -->
+    <div class="modal-overlay" id="newsDetailModal" onclick="closeNewsDetail()">
+        <div class="news-detail-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeNewsDetail()">×</button>
+                <div class="modal-title-section">
+                    <div class="modal-impact-badge" id="modalImpactBadge"></div>
+                    <div class="modal-company" id="modalCompany"></div>
+                    <div class="modal-news-title" id="modalNewsTitle"></div>
+                </div>
+            </div>
+            
+            <div class="modal-content">
+                <div class="modal-meta" id="modalMeta"></div>
+                <div class="modal-news-content" id="modalNewsContent"></div>
+                <div class="modal-sector-info" id="modalSectorInfo"></div>
+            </div>
+                       
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="confirmDeleteFromModal()">
+                    🗑️ Excluir
+                </button>
+                <button class="btn btn-primary" onclick="openNewsSource()" id="sourceBtn">
+                    🌐 Ler na Fonte
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="confirmDeleteModal" onclick="closeConfirmDelete()">
+        <div class="confirm-modal" onclick="event.stopPropagation()">
+            <div class="confirm-header">
+                <div class="confirm-icon">🗑️</div>
+                <div class="confirm-title">Excluir Notícia?</div>
+                <div class="confirm-message">Esta notícia será removida do seu feed. Esta ação não pode ser desfeita.</div>
+            </div>
+            <div class="confirm-actions">
+                <button class="confirm-btn" onclick="closeConfirmDelete()">Cancelar</button>
+                <button class="confirm-btn" onclick="executeDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip Modal -->
+    <div class="modal-overlay" id="tooltipModal" onclick="closeTooltip()">
+        <div class="tooltip-modal" onclick="event.stopPropagation()">
+            <div class="tooltip-header">
+                <div class="tooltip-title" id="tooltipTitle">Ajuda</div>
+                <div class="tooltip-close" onclick="closeTooltip()">×</div>
+            </div>
+            <div class="tooltip-body" id="tooltipBody">
+                Informação...
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item" onclick="goToAlerts()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-label">Alertas</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Notícias</div>
+        </div>
+        <div class="nav-item" onclick="goToReport()">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Relatórios</div>
+        </div>
+        <div class="nav-item" onclick="goToProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // GLOBALS & TOOLTIP SYSTEM
+        // ========================================
+        let tooltipsEnabled = false;
+        let allNews = [];
+        let filteredNews = [];
+        let currentImpactFilter = 'all';
+        let currentUser = null;
+        let userAssets = [];
+        let selectedNewsForDelete = null;
+        let currentNewsDetail = null;
+
+        const tooltips = {
+            'total-noticias': {
+                title: '📊 Total de Notícias',
+                text: 'Quantidade total de notícias disponíveis dos ativos que você está monitorando.',
+                example: '<strong>Dica:</strong> Configure alertas para mais ativos e veja mais notícias relevantes!'
+            },
+            'noticias-positivas': {
+                title: '↗ Notícias Positivas',
+                text: 'Notícias com impacto positivo para o ativo, como aumento de lucros, dividendos, expansões ou boas notícias do setor.',
+                example: '<strong>Exemplo:</strong> "Empresa anuncia lucro recorde" ou "Novos contratos milionários"'
+            },
+            'noticias-negativas': {
+                title: '↘ Notícias Negativas',
+                text: 'Notícias com impacto negativo, como quedas, problemas operacionais, processos ou notícias ruins do setor.',
+                example: '<strong>Exemplo:</strong> "Queda nas vendas" ou "Empresa enfrenta desafios regulatórios"'
+            },
+            'noticias-neutras': {
+                title: '→ Notícias Neutras',
+                text: 'Notícias informativas sem impacto claro positivo ou negativo, como mudanças estratégicas ou apresentações.',
+                example: '<strong>Exemplo:</strong> "Empresa mantém projeções" ou "Nova estratégia de mercado"'
+            },
+            'feed-noticias': {
+                title: '📰 Feed de Notícias',
+                text: 'Lista de todas as notícias dos ativos que você monitora, ordenadas da mais recente para a mais antiga.',
+                example: '<strong>Interação:</strong><br>• Clique na notícia para ver completa<br>• Use 🗑️ para remover do feed<br>• Notícias lidas ficam com opacidade reduzida'
+            }
+        };
+
+        const sectorEmojis = {
+            'Energia': '⚡',
+            'Mineração': '⛏️',
+            'Financeiro': '💰',
+            'Consumo': '🛒',
+            'Industrial': '🏭',
+            'Varejo': '🏬',
+            'Papel e Celulose': '🌲',
+            'Serviços': '🚗',
+            'Tecnologia': '💻',
+            'Saúde': '🏥',
+            'Telecomunicações': '📡',
+            'Construção': '🏗️'
+        };
+
+        function showTooltip(key) {
+            if (!tooltipsEnabled) return;
+            
+            const tooltip = tooltips[key];
+            if (!tooltip) return;
+            
+            document.getElementById('tooltipTitle').textContent = tooltip.title;
+            document.getElementById('tooltipBody').innerHTML = 
+                tooltip.text + (tooltip.example ? '<div class="tooltip-example">' + tooltip.example + '</div>' : '');
+            
+            document.getElementById('tooltipModal').classList.add('show');
+        }
+
+        function closeTooltip() {
+            document.getElementById('tooltipModal').classList.remove('show');
+        }
+
+        function enableTooltips() {
+            tooltipsEnabled = true;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.add('show');
+            });
+        }
+
+        function disableTooltips() {
+            tooltipsEnabled = false;
+            document.querySelectorAll('.help-icon').forEach(icon => {
+                icon.classList.remove('show');
+            });
+        }
+
+        function checkTooltipSettings() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) return;
+            
+            const profile = JSON.parse(localStorage.getItem(`marketPulse_profile_${currentUser.id}`) || '{}');
+            
+            if (profile.preferences && profile.preferences.showTooltips) {
+                enableTooltips();
+            }
+        }
+
+        // ========================================
+        // DATABASE
+        // ========================================
+        const DB = {
+            getCurrentUser() {
+                const data = localStorage.getItem('marketPulse_currentUser');
+                return data ? JSON.parse(data) : null;
+            },
+            getNews() {
+                return JSON.parse(localStorage.getItem('marketPulse_news') || '[]');
+            },
+            getUserAlerts(userId) {
+                const alerts = JSON.parse(localStorage.getItem('marketPulse_alerts') || '[]');
+                return alerts.filter(a => a.userId === userId);
+            },
+            markNewsAsRead(userId, newsId) {
+                const news = this.getNews();
+                const newsItem = news.find(n => n.id === newsId);
+                if (newsItem) {
+                    if (!newsItem.readBy) newsItem.readBy = [];
+                    if (!newsItem.readBy.includes(userId)) {
+                        newsItem.readBy.push(userId);
+                        localStorage.setItem('marketPulse_news', JSON.stringify(news));
+                    }
+                }
+            },
+            isNewsRead(userId, newsId) {
+                const news = this.getNews();
+                const newsItem = news.find(n => n.id === newsId);
+                return newsItem && newsItem.readBy && newsItem.readBy.includes(userId);
+            },
+            deleteNews(newsId) {
+                const news = this.getNews();
+                const filtered = news.filter(n => n.id !== newsId);
+                localStorage.setItem('marketPulse_news', JSON.stringify(filtered));
+            },
+            isNewsNew(timestamp) {
+                const hoursSincePublished = (Date.now() - timestamp) / (1000 * 60 * 60);
+                return hoursSincePublished < 24;
+            }
+        };
+
+        // ========================================
+        // UTILS
+        // ========================================
+        function updateTime() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${h}:${m}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+
+        function getRelativeTime(timestamp) {
+            const diff = Date.now() - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'Agora';
+            if (minutes < 60) return `Há ${minutes}min`;
+            if (hours < 24) return `Há ${hours}h`;
+            if (days < 7) return `Há ${days}d`;
+            
+            return new Date(timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }
+
+        function getSectorEmoji(sector) {
+            return sectorEmojis[sector] || '🏢';
+        }
+
+        // ========================================
+        // LOAD NEWS
+        // ========================================
+        function loadNews() {
+            currentUser = DB.getCurrentUser();
+            
+            if (!currentUser) {
+                window.location.href = 'tela6-login.html';
+                return;
+            }
+
+            const userAlerts = DB.getUserAlerts(currentUser.id);
+            
+            // Criar mapa de ativo -> timestamp de criação do alerta
+            const assetAlertMap = {};
+            userAlerts.forEach(alert => {
+                // Pega o timestamp mais antigo para cada ativo (caso haja múltiplos alertas)
+                if (!assetAlertMap[alert.asset] || alert.createdAt < assetAlertMap[alert.asset]) {
+                    assetAlertMap[alert.asset] = alert.createdAt;
+                }
+            });
+            
+            userAssets = Object.keys(assetAlertMap);
+
+            const allNewsData = DB.getNews();
+            
+            if (userAssets.length > 0) {
+                // Filtrar notícias: apenas do ativo E posteriores à criação do alerta
+                allNews = allNewsData.filter(news => {
+                    const alertCreatedAt = assetAlertMap[news.company];
+                    // Só mostra se: 1) ativo tem alerta E 2) notícia é POSTERIOR ao alerta
+                    return alertCreatedAt && news.timestamp >= alertCreatedAt;
+                });
+            } else {
+                allNews = [];
+            }
+
+            allNews.sort((a, b) => b.timestamp - a.timestamp);
+
+            populateFilterDropdowns();
+            updateStats();
+            filterNews();
+        }
+
+        // ========================================
+        // POPULATE FILTER DROPDOWNS
+        // ========================================
+        function populateFilterDropdowns() {
+            const sectors = [...new Set(allNews.map(n => n.sector))].sort();
+            const sectorFilter = document.getElementById('sectorFilter');
+            sectors.forEach(sector => {
+                const option = document.createElement('option');
+                option.value = sector;
+                option.textContent = `${getSectorEmoji(sector)} ${sector}`;
+                sectorFilter.appendChild(option);
+            });
+
+            const sources = [...new Set(allNews.map(n => n.source))].sort();
+            const sourceFilter = document.getElementById('sourceFilter');
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source;
+                option.textContent = source;
+                sourceFilter.appendChild(option);
+            });
+        }
+
+        // ========================================
+        // STATS
+        // ========================================
+        function updateStats() {
+            const positive = allNews.filter(n => n.impact === 'positive').length;
+            const negative = allNews.filter(n => n.impact === 'negative').length;
+            const neutral = allNews.filter(n => n.impact === 'neutral').length;
+            
+            document.getElementById('totalNewsCount').textContent = allNews.length;
+            document.getElementById('positiveCount').innerHTML = `<span>↗</span> ${positive}`;
+            document.getElementById('negativeCount').innerHTML = `<span>↘</span> ${negative}`;
+            document.getElementById('neutralCount').innerHTML = `<span>→</span> ${neutral}`;
+        }
+
+        // ========================================
+        // RENDER NEWS
+        // ========================================
+        function renderNews() {
+            const newsFeed = document.getElementById('newsFeed');
+            const newsCount = document.getElementById('newsCount');
+            
+            newsCount.textContent = `${filteredNews.length} ${filteredNews.length === 1 ? 'notícia' : 'notícias'}`;
+
+            if (filteredNews.length === 0) {
+                if (userAssets.length === 0) {
+                    newsFeed.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <div class="empty-state-title">Configure seus alertas</div>
+                            <div class="empty-state-text">
+                                Cadastre alertas para ativos<br>
+                                e veja as notícias relevantes aqui
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    newsFeed.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔭</div>
+                            <div class="empty-state-title">Nenhuma notícia encontrada</div>
+                            <div class="empty-state-text">
+                                Tente ajustar os filtros ou<br>
+                                buscar por outros termos
+                            </div>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            newsFeed.innerHTML = filteredNews.map(news => {
+                const isRead = DB.isNewsRead(currentUser.id, news.id);
+                const isNew = DB.isNewsNew(news.timestamp);
+                const impactIcon = news.impact === 'positive' ? '↗' : 
+                                  news.impact === 'negative' ? '↘' : '→';
+                const impactText = news.impact === 'positive' ? 'POSITIVO' : 
+                                  news.impact === 'negative' ? 'NEGATIVO' : 'NEUTRO';
+                
+                return `
+                    <div class="news-card ${isRead ? 'read' : ''}" data-news-id="${news.id}">
+                        ${isNew && !isRead ? '<div class="new-badge">NOVO</div>' : ''}
+                        ${isRead ? '<div class="read-badge">✓ Lida</div>' : ''}
+                        
+                        <div onclick="openNewsDetail(${news.id})">
+                            <div class="news-header">
+                                <div class="news-header-left">
+                                    <span class="impact-badge badge-${news.impact}">
+                                        ${impactIcon} ${impactText}
+                                    </span>
+                                    <span class="company-tag">${news.company}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="news-meta">
+                                <span>${news.source}</span>
+                                <span>•</span>
+                                <span>${getRelativeTime(news.timestamp)}</span>
+                            </div>
+                            
+                            <div class="news-title">${news.title}</div>
+                            <div class="news-summary">${news.summary}</div>
+                        </div>
+                        
+                        <div class="news-footer">
+                            <span class="sector-tag">${getSectorEmoji(news.sector)} ${news.sector}</span>
+                            <div class="news-actions">
+                                <span class="read-more" onclick="openNewsDetail(${news.id})">
+                                    Ler mais ›
+                                </span>
+                                <button class="delete-news-btn" onclick="event.stopPropagation(); confirmDeleteNews(${news.id})">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========================================
+        // FILTERS
+        // ========================================
+        function selectImpactFilter(element, filter) {
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            element.classList.add('active');
+            currentImpactFilter = filter;
+            filterNews();
+        }
+
+        function filterNews() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sectorFilter = document.getElementById('sectorFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const sourceFilter = document.getElementById('sourceFilter').value;
+
+            filteredNews = allNews;
+
+            if (currentImpactFilter !== 'all') {
+                filteredNews = filteredNews.filter(news => news.impact === currentImpactFilter);
+            }
+
+            if (sectorFilter) {
+                filteredNews = filteredNews.filter(news => news.sector === sectorFilter);
+            }
+
+            if (dateFilter) {
+                const now = Date.now();
+                const oneDayMs = 86400000;
+                
+                filteredNews = filteredNews.filter(news => {
+                    const diff = now - news.timestamp;
+                    
+                    switch(dateFilter) {
+                        case 'today':
+                            return diff < oneDayMs;
+                        case 'yesterday':
+                            return diff >= oneDayMs && diff < (oneDayMs * 2);
+                        case 'week':
+                            return diff < (oneDayMs * 7);
+                        case 'month':
+                            return diff < (oneDayMs * 30);
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            if (sourceFilter) {
+                filteredNews = filteredNews.filter(news => news.source === sourceFilter);
+            }
+
+            if (searchTerm) {
+                filteredNews = filteredNews.filter(news => 
+                    news.title.toLowerCase().includes(searchTerm) ||
+                    news.summary.toLowerCase().includes(searchTerm) ||
+                    news.company.toLowerCase().includes(searchTerm) ||
+                    news.sector.toLowerCase().includes(searchTerm) ||
+                    news.source.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderNews();
+        }
+
+        // ========================================
+        // OPEN NEWS DETAIL
+        // ========================================
+        function openNewsDetail(newsId) {
+            const news = allNews.find(n => n.id === newsId);
+            if (!news) return;
+            
+            currentNewsDetail = news;
+            
+            DB.markNewsAsRead(currentUser.id, newsId);
+            
+            const impactIcon = news.impact === 'positive' ? '↗' : 
+                              news.impact === 'negative' ? '↘' : '→';
+            const impactText = news.impact === 'positive' ? 'POSITIVO' : 
+                              news.impact === 'negative' ? 'NEGATIVO' : 'NEUTRO';
+            
+            document.getElementById('modalImpactBadge').innerHTML = `${impactIcon} ${impactText}`;
+            document.getElementById('modalImpactBadge').className = `modal-impact-badge badge-${news.impact}`;
+            document.getElementById('modalCompany').textContent = `${news.company} • ${news.source}`;
+            document.getElementById('modalNewsTitle').textContent = news.title;
+            
+            document.getElementById('modalMeta').innerHTML = `
+                <span>${getRelativeTime(news.timestamp)}</span>
+                <span>•</span>
+                <span>${new Date(news.timestamp).toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: 'long', 
+                    year: 'numeric' 
+                })}</span>
+            `;
+            
+            const fullContent = `
+                <p>${news.summary}</p>
+                <p>Esta notícia tem impacto ${news.impact === 'positive' ? 'positivo' : news.impact === 'negative' ? 'negativo' : 'neutro'} para ${news.company}, uma empresa do setor de ${news.sector}.</p>
+                <p>Analistas do mercado acompanham de perto os desdobramentos desta movimentação, que pode influenciar o comportamento do ativo nas próximas sessões de negociação.</p>
+                <p>Investidores devem considerar o contexto macroeconômico e as condições específicas do setor ao avaliar os impactos desta notícia em suas estratégias de investimento.</p>
+            `;
+            
+            document.getElementById('modalNewsContent').innerHTML = fullContent;
+            
+            document.getElementById('modalSectorInfo').innerHTML = `
+                ${getSectorEmoji(news.sector)} <strong>Setor:</strong> ${news.sector}
+            `;
+            
+            const sourceBtn = document.getElementById('sourceBtn');
+            if (news.sourceUrl) {
+                sourceBtn.style.display = 'flex';
+            } else {
+                sourceBtn.style.display = 'none';
+            }
+            
+            document.getElementById('newsDetailModal').classList.add('show');
+            
+            renderNews();
+        }
+
+        function closeNewsDetail() {
+            document.getElementById('newsDetailModal').classList.remove('show');
+            currentNewsDetail = null;
+        }
+
+        function openNewsSource() {
+            if (currentNewsDetail && currentNewsDetail.sourceUrl) {
+                window.open(currentNewsDetail.sourceUrl, '_blank');
+            } else {
+                alert('⚠️ Link da fonte não disponível.\n\nEste recurso será implementado em breve pelo painel do operador.');
+            }
+        }
+
+        // ========================================
+        // DELETE NEWS
+        // ========================================
+        function confirmDeleteNews(newsId) {
+            selectedNewsForDelete = newsId;
+            document.getElementById('confirmDeleteModal').classList.add('show');
+        }
+
+        function confirmDeleteFromModal() {
+            if (currentNewsDetail) {
+                selectedNewsForDelete = currentNewsDetail.id;
+                closeNewsDetail();
+                document.getElementById('confirmDeleteModal').classList.add('show');
+            }
+        }
+
+        function closeConfirmDelete() {
+            document.getElementById('confirmDeleteModal').classList.remove('show');
+            selectedNewsForDelete = null;
+        }
+
+        function executeDelete() {
+            if (!selectedNewsForDelete) return;
+            
+            DB.deleteNews(selectedNewsForDelete);
+            
+            closeConfirmDelete();
+            
+            allNews = allNews.filter(n => n.id !== selectedNewsForDelete);
+            updateStats();
+            filterNews();
+            
+            selectedNewsForDelete = null;
+            // 🔄 Atualiza a tela com a lista atualizada
+   	    location.reload();
+   	    loadNews();
+
+        }
+
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        function goBack() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToHome() {
+            window.location.href = 'tela1-dashboard.html';
+        }
+
+        function goToAlerts() {
+            window.location.href = 'tela2-notificacoes.html';
+        }
+        
+        function goToReport() {
+            window.location.href = 'tela5-historico.html';
+        }
+
+        function goToProfile() {
+            window.location.href = 'tela7-perfil.html';
+        }
+
+        // ========================================
+        // PREVENT DOUBLE TAP ZOOM
+        // ========================================
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // ========================================
+        // INIT
+        // ========================================
+        window.addEventListener('load', function() {
+            console.log('📰 Market Pulse - Notícias v4.1 REFATORADO');
+            console.log('✅ Sistema carregado');
+            console.log('');
+            console.log('📋 ATUALIZAÇÕES v4.1:');
+            console.log('1. ✅ Lixeira discreta ao lado de "Ler mais"');
+            console.log('2. ✅ Card inteiro clicável (exceto lixeira)');
+            console.log('3. ✅ Pop-up de leitura completa');
+            console.log('4. ✅ Botão "Ler na Fonte" com suporte a sourceUrl');
+            console.log('5. ✅ Badge "Lida" ampliada (12px)');
+            console.log('6. ✅ Badge "NOVO" com degradê violeta→vermelho (11px)');
+            console.log('7. ✅ Filtros avançados sempre visíveis');
+            console.log('8. ✅ Removido botão de engrenagem');
+            console.log('9. ✅ Notícias APENAS após criação do alerta');
+            console.log('');
+            console.log('🔍 LÓGICA DE FILTRAGEM:');
+            console.log('• Notícias mostradas: timestamp >= alerta.createdAt');
+            console.log('• Notícias antigas: NÃO aparecem');
+            console.log('• Múltiplos alertas: usa data do primeiro');
+            console.log('');
+            
+            loadNews();
+            checkTooltipSettings();
+        });
+
+        window.DB = DB;
+        window.enableTooltips = enableTooltips;
+        window.disableTooltips = disableTooltips;
+    </script>
+</body>
+</html>
