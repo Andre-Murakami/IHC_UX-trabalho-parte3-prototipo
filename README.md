@@ -1,5 +1,6 @@
 Market Pulse - Guia de Teste do protótipo
-Guia rápido de uso
+
+   - Guia rápido de uso
 
 ----------------------------------------------------------------
 ATENÇÃO: Antes de tudo 
@@ -12,26 +13,27 @@ ATENÇÃO: Antes de tudo
 PASSO 0: 🔧 Requisitos Técnicos
 ----------------------------------------------------------------
 
-Navegador: Chrome 90+, Firefox 88+, Safari 14+
-JavaScript: Habilitado
-LocalStorage: Habilitado
-Resolução: 375x667px (mobile) ou DevTools responsivo
+   - Navegador: Chrome 90+, Firefox 88+, Safari 14+
+   - JavaScript: Habilitado
+   - LocalStorage: Habilitado
+   - Resolução: 375x667px (mobile) ou DevTools responsivo
 
 
 ----------------------------------------------------------------
 Passo 1: Inicializar Sistema
 ----------------------------------------------------------------
 A sua experiencia com este protótipo pode seguir as opções:
-A) Caso queira fazer login com personas algum de nossos personas faça:
-  Abra seed-database.html no navegador
-  Clique em "🌱 Gerar Dados v4.0 HYBRID"
-  Aguarde mensagem de sucesso (3 usuários, 10 ativos, 30+ notícias)
-  
-B) Caso queira fazer um cadastro personalizado para você, faça:
-  b.1 Abra index.html(tela6-login.html)
-  b.2 clique em "Criar conta grátis" e faça o seu cadatro no app
-  b.3 Faça o login utilizando o e-mail e senha cadastrado
-  Vá para o Passo 3: "Testar Funcionalidade Principal"
+
+   A) Caso queira fazer login com personas algum de nossos personas faça:
+     Abra seed-database.html no navegador
+     Clique em "🌱 Gerar Dados v4.0 HYBRID"
+     Aguarde mensagem de sucesso (3 usuários, 10 ativos, 30+ notícias)
+     
+   B) Caso queira fazer um cadastro personalizado para você, faça:
+     b.1 Abra index.html(tela6-login.html)
+     b.2 clique em "Criar conta grátis" e faça o seu cadatro no app
+     b.3 Faça o login utilizando o e-mail e senha cadastrado
+     Vá para o Passo 3: "Testar Funcionalidade Principal"
   
   
 ----------------------------------------------------------------
